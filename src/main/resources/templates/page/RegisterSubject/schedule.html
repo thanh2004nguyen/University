@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+layout:decorate="~{/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedule</title>
+    
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+        function confirmCancel(event) {
+            event.preventDefault(); // Prevent the form from submitting immediately
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to cancel this class?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, cancel it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If the user confirms, submit the form
+                    event.target.submit();
+                }
+            });
+        }
+    </script>
+    
+    
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        
+            .merged-cell {
+        background-color: lightblue; /* Set your desired background color */
+    }
+    </style>
+</head>
+<body layout:fragment="content">
+<h2>Schedule</h2>
+
+<table class="table table-bordered schedule-table " style="height: 30vh">
+
+    <thead>
+    <tr>
+
+        <th >ClassName</th>
+        <th >Max Quantity</th>
+        <th >Curent Quantity</th>
+        <th >Status</th>
+        <th >Action</th>
+    </tr>
+    </thead>
+<tbody>
+    <tr th:each="class : ${studentClasses}">
+
+       <td th:utext="${class.ClassforSubject.Name} + '<br/>' + ${class.ClassforSubject.Subject.Name}"></td>
+        <td th:text="${class.ClassforSubject.Quantity}"></td>
+        <td th:text="${class.ClassforSubject.CurrentQuantity}"></td>
+        
+<td th:text="${class.status == T(com.aptech.group3.Dto.ClassStatus).LIST ? 'Pending Approval(Student can be Approved to Class if Class Quantity more than 30% of Max Quantity)' : class.status}"></td>
+<td>
+    <!-- Cancel Button -->
+    <form th:action="@{/web/ClassRegister/cancelClass}" method="post" onsubmit="confirmCancel(event)" th:if="${class.status == T(com.aptech.group3.Dto.ClassStatus).LIST or class.status == T(com.aptech.group3.Dto.ClassStatus).WAITINGLIST}">
+        <!-- Assuming 'classId' uniquely identifies a class, adjust the name as per your model -->
+        <input type="hidden" name="classId" th:value="${class.id}" />
+        <button type="submit">Cancel</button>
+    </form>
+</td>
+    </tr>
+</tbody>
+
+</table>
+
+
+<table id="scheduleTable" class="table table-bordered schedule-table " style="height: 60vh">
+
+    <thead>
+    <tr>
+        <th>Slot</th>
+        <th colspan="2">Monday</th>
+        <th colspan="2">Tuesday</th>
+        <th colspan="2">Wednesday</th>
+        <th colspan="2">Thursday</th>
+        <th colspan="2">Friday</th>
+        <th colspan="2">Saturday</th>
+    </tr>
+    <tr>
+        <th></th>       
+        <th>First Half</th>
+        <th>Second Half</th>
+        <th>First Half</th>
+        <th>Second Half</th>
+        <th>First Half</th>
+        <th>Second Half</th>
+        <th>First Half</th>
+        <th>Second Half</th>
+        <th>First Half</th>
+        <th>Second Half</th>
+        <th>First Half</th>
+        <th>Second Half</th>
+    </tr>
+    </thead>
+<tbody>
+    <tr th:each="slot, slotIdx : ${scheduleTable}">
+        <td th:text="${slotIdx.index + 1}"></td>
+        <!-- Iterate over the slots for the first half -->
+    <td th:each="classInfo, weekdayIdx : ${slot}" 
+    th:text="${classInfo}" 
+    th:classappend="${(weekdayIdx.index % 2) == 0} ? 'blue' : 'half-semester'">
+</td>
+ 
+    </tr>
+</tbody>
+
+</table>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function mergeCells(table, columnIndex) {
+            let headerCell = null;
+            let headerText = null;
+            console.log(columnIndex);
+            for (let i = 1; i < table.rows.length; i++) { // Start from the second row
+                const row = table.rows[i];
+                const firstCell = row.cells[columnIndex];
+
+                if (firstCell.innerText.trim() !== '') { // Check if cell has content
+                    if (headerText === null || firstCell.innerText !== headerText) {
+                        headerText = firstCell.innerText;
+                        headerCell = firstCell;
+                    } else {
+                        headerCell.rowSpan++;
+                        firstCell.remove();
+                        headerCell.classList.add('merged-cell'); // Apply the CSS class to merged cells
+                    }
+                }
+            }
+        }
+
+
+        let table = document.getElementById("scheduleTable");
+        // Merge cells for each day of the week
+        for (let i = 12; i >= 0; i--) {
+            mergeCells(table, i);
+        }
+        
+    });
+</script>
+</body>
+</html>

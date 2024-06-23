@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+	<div layout:fragment="content" class="card text-center ml-3">
+		<h3
+			style="color: rebeccapurple; font-family: 'georgia'; padding: 30px 0px 30px 0px; font-weight: 300; font-size: 40px;">Update
+			Status</h3>
+			<input th:if="${error=='UPDATED'}" class="show_success_toast" readonly type="hidden" th:value="#{toast.success.update}"> 
+			   <div id="toastContainer" style="position: absolute; top: 0; right: 0; z-index: 1050;"></div>
+
+            <!-- Toast template -->
+            <div class="toast" id="toastTemplate" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000" style="margin-top:50px; min-width:150px;">
+                <div class="toast-header">
+                    <strong class="mr-auto toast-title">Notification</strong>
+                    <small class="text-muted toast-time">just now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    Mark updated successfully.
+                </div>
+            </div>
+		<div class="d-flex align-items-center justify-content-between"
+			style="padding: 20px 100px;">
+			<form action="/admin/user/updateStatus" method="GET"
+				id="form_search_update_status">
+
+				<label for="status">Status:</label> <select
+					id="status_update_student" name="status">
+					<option value="">-- Select Status --</option>
+					<th:block th:each="status : ${statuses}">
+						<option th:value="${status}" th:selected="${status==curenStatus}"
+							th:text="${status}"></option>
+					</th:block>
+				</select> 
+				<label style="display:none" for="field">Field:</label> <select style="display:none" id="field" name="fieldId">
+					<option value="">-- Select Field --</option>
+					<th:block th:each="field : ${fields}">
+						<option th:value="${field.id}" th:text="${field.name}"></option>
+					</th:block>
+				</select>
+
+
+			</form>
+
+			<!-- Code search form -->
+			<form action="/admin/user/searchByCode" method="POST">
+				<label for="code">Code:</label> <input type="text" id="code"
+					name="code">
+				<button type="submit">Search by Code</button>
+			</form>
+
+			<button type="button" class="btn btn-primary"
+				id="btn_update_status_student" data-toggle="modal"
+				data-target="#statusModal">Update Status</button>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="statusModal" tabindex="-1" role="dialog"
+			aria-labelledby="statusModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form id="updateStatusForm" action="/admin/user/updateStatus"
+						method="POST">
+						<div class="modal-header">
+							<h5 class="modal-title" id="statusModalLabel">Select Status</h5>
+						</div>
+						<select id="statusSelect" name="select_type_student_update"
+							class="form-control">
+							<option value="">-- Select Status --</option>
+							<!-- Thêm danh sách các status từ server -->
+							<th:block th:each="status : ${statuses}">
+								<option th:value="${status}" th:text="${status}"></option>
+							</th:block>
+						</select>
+
+						<div id="wrap_input_appen"></div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">Close</button>
+							<button type="button"
+								class="btn btn-primary submit_update_statusList">Update</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
+		<table>
+			<thead>
+				<tr>
+					<th>Code</th>
+					<th>Name</th>
+					<th>Role</th>
+					<th>Status</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- Iterate over users -->
+				<tr th:each="user : ${users}">
+					<td class="text-center" th:text="${user.code}"></td>
+					<td class="text-center" th:text="${user.name}"></td>
+					<td class="text-center" th:text="${user.role}"></td>
+					<td class="text-center" th:text="${user.status}"></td>
+					<!-- <td class="noscrollbar" style="height: 50px;">
+					<select
+						class="form-control" multiple disabled
+						style="border: none; height: 60px; background-color: transparent; overflow-y: scroll; -webkit-overflow-scrolling: touch;">
+							<option th:each="field : ${user.fields}" th:text="${field.name}"></option>
+					</select></td> -->
+					
+					<td class="text-center"><input type="checkbox" class="checkbox_status"
+						th:value="${user.id}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

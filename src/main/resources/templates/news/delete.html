@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Delete News</title>
+</head>
+<body>
+    <h1>Are you sure you want to delete this news?</h1>
+    <form action="/news/delete/{id}" method="post">
+        <input type="hidden" name="_method" value="DELETE"/>
+        <input type="submit" value="Delete">
+    </form>
+    <a href="/news/index">Cancel</a>
+</body>
+</html>

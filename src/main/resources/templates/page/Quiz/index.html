@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+layout:decorate="~{/layout}">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Quiz Show</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .question, .question span {
+            font-size: 1.5em;
+            padding: 2px;
+            display: block;
+            background-color: #f9f9f9;
+        }
+
+        .answer label {
+            font-size: 1em;
+            padding: 5px;
+            display: block;
+            margin: 5px 0px;
+            border: 1px solid #ddd;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            color: green;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            font-size: 1em;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            font-size: 2em;
+            background-color: #25705f;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #afc9c3;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .answer input[type="checkbox"] {
+            margin-right: 20px;
+            cursor: pointer;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .quiz-container ol {
+            counter-reset: question-counter;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .quiz-container li {
+            counter-increment: question-counter;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .quiz-container li::before {
+            content: counter(question-counter) ".";
+            font-weight: bold;
+            width: 1em;
+        }
+
+        .quiz-container .answer input[type="checkbox"] {
+            margin-left: 10px;
+            transform: scale(3);
+            cursor: pointer;
+        }
+
+        .quiz-container .answer label {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .quiz-container .answer label span {
+            flex-grow: 1;
+        }
+
+        .pagination-container {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination-link {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 5px 10px;
+            text-decoration: none;
+            color: #007bff;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .pagination-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .current-page {
+            font-weight: bold;
+        }
+
+        .total-pages {
+            color: #666;
+        }
+
+        #timer {
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            background-color: #333;
+            text-align: center;
+            font-size: 2em;
+            padding: 10px;
+            margin: 10px auto;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 300px;
+        }
+
+        .timer-part {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+        }
+
+        .timer-part span {
+            background-color: #666;
+            color: #fff;
+            border-radius: 5px;
+            padding: 10px 20px;
+            min-width: 100px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .timer-label {
+            font-size: 0.25em;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        #timer > span {
+            font-size: 0.7em;
+            padding: 0 5px;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+<article layout:fragment="content" class="quiz-container">
+   <div id="timer">
+        <div class="timer-part">
+            <span id="minutes">00</span>
+            <div class="timer-label">minutes</div>
+        </div>
+        <span>:</span>
+        <div class="timer-part">
+            <span id="seconds">00</span>
+            <div class="timer-label">seconds</div>
+        </div>
+    </div>
+    <form th:action="@{/web/quiz/submitQuiz}" method="post" id="quizForm">
+        <input th:value="${duration}" id="quizDuration" type="hidden" >
+        <input th:value="${quizExamId}" name="quizExamId" type="hidden" >
+        <div th:each="question : ${quizQuestions}" class="question">
+            <input th:value="${question.Quiz.id}" type="hidden" th:name="quizId" >
+            <input th:value="${question.id}" th:name="questionIds" type="hidden">
+            <span th:utext="${question.content}" style="font-size:20px"></span>
+            <div class="answers">
+                <ol>
+                    <li th:each="answer : ${question.quizAnswers}" class="answer">
+                        <label>
+                            <input type="checkbox" th:if="${question.type == 'Multi'}" th:name="|answers_${question.id}|" th:value="${answer.id}" data-question-id="${question.id}" />
+                            <input type="checkbox" th:if="${question.type == 'Single'}" th:name="|answers_${question.id}|" th:value="${answer.id}" data-question-id="${question.id}" onclick="handleSingleCheckbox(this)" />
+                            <span th:text="${answer.content}"></span>
+                        </label>
+                    </li>
+                </ol>
+            </div>
+        </div>
+        <div class="pagination-container">
+            <button type="submit" name="action" value="previous" th:disabled="${currentPage == 0}" class="pagination-link">Previous</button>
+            <span class="current-page" th:text="${currentPage + 1}">1</span> /
+            <span class="total-pages" th:text="${totalPages}">3</span>
+            <button type="submit" name="action" value="next" th:disabled="${currentPage + 1 >= totalPages}" class="pagination-link">Next</button>
+            <button type="submit" name="action" value="submitQuiz" class="pagination-link submit-quiz" th:style="${currentPage + 1 == totalPages} ? 'visibility:visible;' : 'visibility:hidden;'">Submit Quiz</button>
+        </div>
+    </form>
+
+    <script th:inline="javascript">
+        window.onload = function() {
+            var savedAnswers = /*[[${savedAnswers}]]*/ {};
+            Object.keys(savedAnswers).forEach(function(questionId) {
+                savedAnswers[questionId].forEach(function(answerId) {
+                    var checkboxes = document.querySelectorAll('input[type="checkbox"][value="' + answerId + '"]');
+                    checkboxes.forEach(function(checkbox) {
+                        checkbox.checked = true;
+                    });
+                });
+            });
+        };
+
+        function handleSingleCheckbox(checkbox) {
+            var questionId = checkbox.dataset.questionId;
+            var checkboxes = document.querySelectorAll('input[type="checkbox"][data-question-id="' + questionId + '"]');
+            checkboxes.forEach(function(otherCheckbox) {
+                if (otherCheckbox !== checkbox) {
+                    otherCheckbox.checked = false;
+                }
+            });
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTimer();
+
+            document.getElementById('quizForm').addEventListener('submit', function(event) {
+                var clickedButton = document.activeElement.getAttribute('name');
+                if (clickedButton === 'action' && document.activeElement.getAttribute('value') === 'submitQuiz') {
+                    resetTimer();
+                }
+            });
+        });
+
+        function initializeTimer() {
+            var currentTime = Date.now();
+            var storedEndTime = parseInt(localStorage.getItem('endTime'), 10);
+
+            if (storedEndTime && storedEndTime > currentTime) {
+                startCountdown(storedEndTime);
+            } else {
+                var durationSeconds = parseInt(document.getElementById('quizDuration').value) * 60;
+                var newEndTime = currentTime + durationSeconds * 1000;
+                localStorage.setItem('endTime', newEndTime);
+                startCountdown(newEndTime);
+            }
+        }
+
+        function startCountdown(endTime) {
+            var timerInterval = setInterval(function() {
+                var currentTime = Date.now();
+                var timeLeft = endTime - currentTime;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    localStorage.removeItem('endTime');
+                    document.getElementById('minutes').textContent = '00';
+                    document.getElementById('seconds').textContent = '00';
+
+                    var submitButton = document.querySelector('.submit-quiz');
+                    if (submitButton) submitButton.click();
+                } else {
+                    updateTimerDisplay(timeLeft);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay(timeLeft) {
+            var minutes = Math.floor(timeLeft / 60000);
+            var seconds = Math.floor((timeLeft % 60000) / 1000);
+            document.getElementById('minutes').textContent = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('seconds').textContent = seconds < 10 ? '0' + seconds : seconds;
+        }
+
+        function resetTimer() {
+            localStorage.removeItem('endTime');
+        }
+    </script>
+</article>
+</body>
+</html>

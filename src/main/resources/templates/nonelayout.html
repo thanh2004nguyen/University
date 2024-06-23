@@ -1,0 +1,57 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+         <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/assets/css/fontawesome.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/templatemo-style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/owl.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/slideshow_homepage.css}">
+    <link rel="stylesheet" th:href="@{https://unicons.iconscout.com/release/v4.0.0/css/line.css}">
+    <!-- <link rel="stylesheet" th:href="@{/assets/css/loginform.css}"> -->
+<head>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/test.css}" />
+</head>
+
+   <body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+      <!-- Main -->
+        <div id="main">
+          <div class="inner">
+
+            <!-- Header -->
+        
+                
+                <!--content  -->
+                <div layout:fragment="content"></div>
+                
+
+  
+          </div>
+             </div>
+
+      <!-- Sidebar -->
+   
+
+    </div>
+
+</body>
+
+  <!-- Scripts -->
+  <!-- Bootstrap core JavaScript -->
+    <script th:src="@{vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <script th:src="@{assets/js/browser.min.js}"></script>
+    <script th:src="@{assets/js/breakpoints.min.js}"></script>
+    <script th:src="@{assets/js/transition.js}"></script>
+    <script th:src="@{assets/js/owl-carousel.js}"></script>
+    <script th:src="@{assets/js/custom.js}"></script>
+    <script th:src="@{assets/js/loginform.js}"></script>
+    <script th:src="@{assets/js/slideshow_homepage.js}"></script>
+</html>

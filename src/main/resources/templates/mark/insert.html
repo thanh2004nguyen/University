@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{/adminLayout/adminLayout}">
+<head>
+<style>
+.center-content td {
+	text-align: center;
+}
+</style>
+<title>Insert Mark Subject</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+	<div layout:fragment="content" class="container mt-3">
+		<div class="card">
+			<div class="card-header"	
+				style="width: 100%; color: rebeccapurple; font-family: 'georgia'; font-weight: 300;">
+				<h3
+					style="text-align: center; font-weight: bold; font-size: 40px; text-transform: uppercase;">Insert
+					Mark Subject</h3>
+			</div>
+			  <!-- Toast container -->
+    <div id="toastContainer" style="position: absolute; top: 0; right: 0; z-index: 1050;"></div>
+
+    <!-- Toast template -->
+    <div class="toast" id="toastTemplate" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000" style="margin-top:50px; min-width:150px;">
+        <div class="toast-header">
+            <strong class="mr-auto toast-title">Bootstrap</strong>
+            <small class="text-muted toast-time">just now</small>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            Hello, world! This is a toast message.
+        </div>
+    </div>
+
+          <input type="hidden" id="successMessage" data-success-message="${successMessage}" data-toast-title="${toastTitle}" data-toast-type="${toastType}">
+        
+			<div class="card-body">	
+				<div class="input-group mb-5">
+				<div class="input-group-prepend" style="width: 150px">
+					<label style="width: 100%" class="input-group-text" for="role">Style mark</label>
+				</div>	
+				<select class="form-control mark-style" name="style">
+					<option value="">Chọn loại điểm</option>
+					<option value="normalMark">Normal Mark</option>
+					<option value="middleMark">Middle Mark</option>
+					<option value="finalMark">Final Mark</option>
+				</select>
+				</div>
+				<form id="markForm" action="/admin/mark/insert" method="post">
+					<input type="hidden" name="classId" th:value="${classId}">
+					<input type="hidden" name="studentIds" th:value="${studentIds}">
+					<!-- Add hidden input for studentIds -->
+
+					<table class="table">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>Student ID</th>
+								<th>Student Code</th>
+								<th>Student Name</th>
+								<th>Mark</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="center-content"
+								th:each="studentClass, index : ${studentClasses}">
+								<td th:text="${index.index}"></td>
+								<td th:text="${studentClass.student.id}"></td>
+								<td th:text="${studentClass.student.code}"></td>
+								<td th:text="${studentClass.student.name}"></td>
+								<td>
+									<input type="number" name="marks[]" class="form-control" >
+									<span class="feedback" style="display: none; color: red;">Please enter a score from 0-100</span> 
+									<input type="hidden"name="subjectId" class="form-control" style="display: none" th:value="${subjectId}" required>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="float-right">
+						<button type="submit" class="btn btn-primary submit" id="btn-insert">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

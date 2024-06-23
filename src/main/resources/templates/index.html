@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+</head>
+
+<body>
+	index
+
+
+	<body>
+		<h1>Rooms</h1>
+		<form action="/search">
+			Min <input name="min">
+			Max <input name="max">
+			<input type="submit" value="Search">
+
+		</form>
+		<table>
+			<thead>
+				<tr>
+					<th>Room Name</th>
+					<th> admin</th>
+					<th>Category</th>
+				</tr>
+
+			</thead>
+			<tbody th:each="room : ${rooms}">
+				<tr>
+					<td th:text="${room.name}"></td>
+					<td th:text="${room.admin}"></td>
+					<td th:text="${room.category.name}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+
+</html>

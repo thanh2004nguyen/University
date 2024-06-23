@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+	<div layout:fragment="content" class="card text-center ml-3">
+		<div style="width: 100%" class="card-header">
+			<h3 style="font-weight: bold; font-size: 40px; color: #663399;"
+				th:text="#{user.update.title}"></h3>
+		</div>
+		<div class="card-body">
+			<form method="post" th:object="${user}"
+				th:action="@{'/admin/user/update/'+*{id}}" id="update_user_form"
+				enctype="multipart/form-data">
+				
+				<input type="hidden" th:field="*{id}" />
+				<!-- Hidden field for user ID -->
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="role">Role</label>
+					</div>
+					<select class="form-control" id="role" th:field="*{role}"
+						name="role" required>
+						<option value="STUDENT">Student</option>
+						<option value="TEACHER">Teacher</option>
+						<option value="EMPLOYEE">Employee</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="name" th:text="#{label.user.name}">Name:</label> <input
+						type="text" class="form-control" id="name" th:field="*{name}" />
+				</div>
+				<div class="form-group" th:if="${#fields.hasErrors('name')}"
+					style="width: 100%; height: 20px; transform: translateX(-15%);">
+					<span style="color: red; width: 100%;" th:errors="*{name}"></span>
+				</div>
+
+				<div class="form-group">
+					<label for="email">Email:</label> <input type="email"
+						class="form-control" id="email" th:field="*{email}" />
+				</div>
+				<div class="form-group" th:if="${#fields.hasErrors('email')}"
+					style="width: 100%; height: 20px; transform: translateX(-15%);">
+					<span style="color: red; width: 100%;" th:errors="*{email}"></span>
+				</div>
+
+
+				<div class="form-group">
+					<label for="phone">Phone:</label> <input type="text"
+						class="form-control" id="phone" th:field="*{phone}" />
+				</div>
+				<!-- 	<div class="form-group" th:if="${#fields.hasErrors('phone')}"
+					style="width: 100%; height: 20px; transform: translateX(-15%);">
+					<span style="color: red; width: 100%;" th:errors="*{phone}"></span>
+				</div> -->
+
+
+
+				<div class="form-group">
+					<label for="information" th:text="#{label.user.information}">Information:</label>
+					<input type="text" class="form-control" id="information"
+						th:field="*{infomation}" />
+				</div>
+				<div class="form-group">
+					<label for="address">Address:</label> <input type="text"
+						class="form-control" id="address" th:field="*{address}" />
+				</div>
+
+
+				<div class="form-group">
+					<label for="fields">Fields:</label> <select
+						class="form-control select2" id="fields" name="fields" multiple
+						style="width: 100%;">
+						<option th:each="field : ${allFields}" th:value="${field.id}"
+							th:text="${field.name}"
+							th:selected="${userFields.contains(field)}"></option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="avatar">Avatar:</label> <img
+						style="max-width: 50px; max-height: 50px; display: block; margin: auto; margin: 10px;"
+						th:src="@{/getimage/{avatar}(avatar=*{avatar})}" /> <input
+						type="file" class="form-control" name="avatar" id="avatar"
+						th:field="*{avatar}" />
+				</div>
+
+				<button type="submit" class="btn btn-primary"
+					th:text="#{user.update.title}">Update</button>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

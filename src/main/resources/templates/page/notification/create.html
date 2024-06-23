@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+</head>
+<body>
+
+	<div layout:fragment="content" class="card " style="width: 100%">
+
+		<h3 class="card-head text-center" th:text="#{notify.create.head}">Create new notification</h3>
+
+
+		<form th:action="@{/admin/notify/create}" th:object="${data}"
+			class="card-body" method="post" style="width: 100%">
+			<div class="input-group mb-5 ">
+				<div class="input-group">
+				<div class="input-group-prepend">
+					<span  style="width: 150px" th:text="#{notify.title}" class="input-group-text" id="inputGroup-sizing-default">Title</span>
+				</div>
+				<input th:field="*{title}" class="form-control"
+					aria-label="Default" aria-describedby="inputGroup-sizing-default">
+				
+			</div>
+			<p th:if="${#fields.hasErrors('title')}" th:errors="*{title}"class="text-danger mt-1">Name Error</p>	
+			</div>
+		
+			
+
+<div class=" mb-5 ">
+<div class="input-group ">
+				<div class="input-group-prepend">
+					<span  style="width: 150px" th:text="#{notify.content}" class="input-group-text" id="inputGroup-sizing-default">Content</span>
+				</div>
+				<input th:field="*{content}" class="form-control"
+					aria-label="Default" aria-describedby="inputGroup-sizing-default">			
+			</div>
+				<p th:if="${#fields.hasErrors('content')}" th:errors="*{content}"class="text-danger mt-1">Name Error</p>	
+</div>
+			
+
+
+<div class="input-group mb-5 ">
+	<div class="input-group">
+				<div class="input-group-prepend" style="width: 150px">
+					<label style="width: 100%" class="input-group-text"
+						th:text="#{label.type}" for="inputGroupSelect01">Type notification</label>
+				</div>
+
+				<select th:field="*{type}" class="custom-select select_subject_create"
+					id="select_type_creaet_notify">
+					<option th:value="${null}" th:text="#{class.select.type}">select Type notification </option>
+
+					<option th:each="s : ${notifyTypes}" th:value="${s}" th:text="${s}"></option>
+				</select>
+					
+
+			</div>
+			<p th:if="${#fields.hasErrors('type')}" th:errors="*{type}"class="text-danger mt-1">Name Error</p>
+</div>
+		
+			
+				<div  class="input-group mb-5 d-none ">
+				<div class="input-group-prepend">
+					<span  style="width: 150px" th:text="#{notify.field}" class="input-group-text" id="inputGroup-sizing-default">field</span>
+				</div>
+				<input id="value_field_create_notify" readonly th:field="*{field_id}"  class="form-control"
+					aria-label="Default" aria-describedby="inputGroup-sizing-default">
+			</div>
+			
+			
+					<div id="cover_field_create_notify" class="input-group mb-5 " style="display:none">
+				<div class="input-group-prepend">
+					<span  style="width: 150px" th:text="#{notify.field}" class="input-group-text" id="inputGroup-sizing-default">Field</span>
+				</div>
+				<input readonly  th:value="${field}" class="form-control"
+					aria-label="Default" aria-describedby="inputGroup-sizing-default">
+			</div>
+		
+			<div id="cover_class_create_notify" class=" mb-5 " style="display:none" >
+			
+				<div class="input-group " >
+				<div class="input-group-prepend" style="width: 150px">
+					<label style="width: 100%" class="input-group-text"
+					th:text="#{label.class}"	for="inputGroupSelect01">Class</label>
+				</div>
+
+				<select th:field="*{class_id}" class="custom-select select_subject_create"
+					id="select_class_creaet_notify">
+					<option th:value="${null}" th:text="#{discuss.class}">select class </option>
+					<option th:each="s : ${classes}" th:text="${s.name}"
+					th:value="${s.id}"></option>
+				</select>
+			</div>
+			<p th:if="${classError}" th:text="#{notify.error.type.null}" th:data_error="${classError}" id="error_notify_create" class="text-danger mt-1">Class not null</p>
+			</div>
+			
+			
+			
+				<div class="input-group mb-5 d-none">
+				<div class="input-group-prepend" style="width: 150px">
+					<label style="width: 100%" class="input-group-text" for="created_at">Created At</label>
+				</div>
+				<input th:field="*{created_at}" type="date"  class="form-control">
+			</div>
+			
+			
+		<div class="mt-5">
+<span th:text="#{holiday.chose.type}">Chose type : </span>
+				<div class="form-check form-check-inline">
+					<input checked class="form-check-input radio_check_type_holiday" type="checkbox"
+						name="type_time_expried" th:field="*{typeSent}" value="email">
+					<label class="form-check-label" for="inlineRadio2"  > to email</label>
+				</div>
+
+				<div class="form-check form-check-inline">
+					<input class="form-check-input radio_check_type_holiday" type="checkbox"
+						name="type_time_expried" th:field="*{typeSent}" value="mobile"> <label
+						class="form-check-label" for="inlineRadio2"
+						>to Mobile</label>
+				</div>
+			</div>
+<p th:if="${#fields.hasErrors('typeSent')}" th:errors="*{typeSent}"class="text-danger mt-1">Name Error</p>
+			
+
+			<button type="submit" class="btn btn-primary mt-5"
+				th:text="#{label.create}">Create</button>
+
+
+
+		</form>
+	</div>
+</body>
+</html>

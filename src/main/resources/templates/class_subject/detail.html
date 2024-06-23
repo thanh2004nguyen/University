@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{adminLayout/adminLayout}">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        b {
+            font-size: 20px;
+            text-transform: capitalize;
+        }
+
+        * {
+            font-size: 18px
+        }
+
+        .left-align {
+            width: 50%;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content" class="card text-center ml-3">
+    <h3 style="font-weight:bold; font-size:40px" class="card-header" th:text="#{class.detail.head}">Detail class</h3>
+    <div th:object=${data} class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-4" style="width: 100%;">
+            <div class="left-align">
+            <b th:text="#{label.class} + ' : '">class : </b>
+                <span th:text="*{name}"></span>
+            </div>
+            <div style="width: 30%;" class="left-align">
+            <b th:text="#{class.quantity} + ' : '" >Quantity : </b>
+                <span> 40</span>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mb-4" style="width: 100%;">
+            <div class="left-align">
+            <b th:text="#{holiday.date.start} + ' : '">Start date : </b>
+                <span th:text="*{#dates.format(dateStart, 'yyyy-MM-dd')}"> 01-01-2024</span>
+            </div>
+            <div style="width: 30%;" class="left-align">
+            <b th:text="#{holiday.date.end} + ' : '">End date : </b>
+                <span th:text="*{#dates.format(dateEnd, 'yyyy-MM-dd')}"> 26-04-2024</span>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mb-4" style="width: 100%;">
+            <div class="left-align" >
+            <b th:text="#{label.teacher} + ' : '">Teacher : </b>
+                <span th:text="*{teacher.name}"> Ho Van Cuong</span>
+            </div>
+            <div style="width: 30%;" class="left-align">
+            <b th:text="#{label.room} + ' : '">Room : </b>
+                <span th:text="*{room.name}"> A1.04</span>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mb-4" style="width: 100%;">
+            <div class="left-align">
+            <b th:text="#{label.weekday} + ' : '">Week day : </b>
+                <span class="convert_week_day" th:text="*{weekDay}"> monday</span>
+            </div>
+            <div style="width: 30%;" class="left-align">
+            <b th:text="#{schedule.day.slot} + ' : '">Slots : </b>
+                <span th:text="*{slotStart + '-' + slotEnd}"> 1-4</span>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between mb-4" style="width: 100%;">
+            <div class="left-align">
+            <b th:text="#{label.type} + ' : '">Type : </b> 
+                <span th:text="*{type}">Action</span>
+            </div>
+            <div style="width: 30%;" class="left-align">
+            <b th:text="#{label.status} + ' : '">Status : </b>
+                <span th:text="*{status}"> learning</span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Detail Subject</title>
+</head>
+<body>
+	<div layout:fragment="content" class="card text-center ml-6"
+		style="margin-top: 60px; border: none">
+		<h2 style="color: #663399;">Detail Subject</h2>
+		<div class="container">
+			<div class="row gutters"
+				style="border: 1px solid gray; box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);">
+				<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+					<div class="card h-100">
+						<div class="card-body">
+							<div>
+								<div>
+
+									<h5 th:text=${subject.name}></h5>
+
+								</div>
+								<div class="about">
+									<h5>Subject info</h5>
+									<!-- <p th:text=${subject.infomation}></p> -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+					<div class="card h-100">
+						<div class="card-body">
+							<div class="row gutters">
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+									<h6 class="mb-2 text-primary">Subject Details</h6>
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+									<div class="form-group">
+										<!-- <label th:text="#{label.user.name}">Name</label> -->
+										<label>Name</label>
+										<h2 class="form-control" id="name" th:text=${subject.name}></h2>
+									</div>
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+									<div class="form-group">
+										<!-- <label th:text="#{label.user.name}">Name</label> -->
+										<label>Credit</label>
+										<h2 class="form-control" id="credit" th:text=${subject.credit}></h2>
+									</div>
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+									<div class="form-group">
+										<!-- <label th:text="#{label.user.name}">Name</label> -->
+										<label>Subject Type</label>
+										<h2 class="form-control" id="type" th:text=${subject.type}></h2>
+									</div>
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+									<div class="form-group">
+										<!-- <label th:text="#{label.user.name}">Name</label> -->
+										<label>Subject Credit Action</label>
+										<h2 class="form-control" id="creditAction"
+											th:text=${subject.creditAction}></h2>
+									</div>
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+									<div class="form-group">
+										<!-- <label th:text="#{label.user.name}">Name</label> -->
+										<label>Field</label>
+										<h2 class="form-control" id="field"
+											th:text=${subject.field.name}></h2>
+									</div>
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+									<div class="form-group">
+										<!-- <label th:text="#{label.user.name}">Name</label> -->
+										<label>Subject Level</label>
+										<h2 class="form-control" id="subjectlevel"
+											th:text=${subject.subjectlevel.name}></h2>
+									</div>
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+									<div class="form-group"  >
+
+										<!-- th:each="optSubject, iterStat : ${reqsub.optionalRequiredSuject}" -->
+										
+							
+						
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

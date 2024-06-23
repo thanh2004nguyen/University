@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>News Index</title>
+    <style>
+        .news-image-container {
+            position: relative;
+            width: 1000px;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .news-image {
+            margin-left: 150px;
+            height: 100%;
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+
+        .news-title {
+           position: absolute;
+           
+    top: 60%;
+    left: 50%; /* Đặt phần tử ở giữa ngang */
+    transform: translate(-50%, -50%); /* Đặt phần tử ở giữa ngang và dọc */
+    width: 80%; /* Đặt chiều rộng tối đa cho title */
+    max-width: 800px; /* Giới hạn chiều rộng tối đa */
+    height: auto; /* Để chiều cao tự động điều chỉnh */
+    text-align: center; /* Canh giữa văn bản */
+    color: white;
+    font-size: 32px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    overflow: hidden; /* Ẩn phần chữ tràn ra ngoài */
+    word-wrap: break-word; 
+    
+        }
+
+        .news-item:hover .news-image {
+            transform: scale(1.1);
+        }
+
+        .news-item:hover .news-title {
+            opacity: 1;
+        }
+
+        .continue {
+            position: absolute;
+            top: 88%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+           
+            color: white;
+            font-size: 20px;
+          
+            margin-left: 50px;
+            
+        }
+
+        .news-item:hover .continue {
+            opacity: 1;
+        }
+
+        .dots {
+            position: absolute;
+            bottom: 0;
+            left: 55%;
+            transform: translateX(-50%);
+        }
+
+        .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: black;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        .news-title a{
+        display: inline-block;
+        cursor: default;
+        white-space: normal;
+        width: 100%;
+        }
+        
+        .continue a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .news-title a:hover, .continue a:hover {
+            text-decoration: underline;
+        }
+
+        .small-news-container {
+    position: relative;
+    display: inline-block;
+    font-size:16px;
+    
+    width: 35%;
+     /* Điều chỉnh kích thước để vừa 6 bài viết */
+    height: 150px; /* Điều chỉnh chiều cao nếu cần */
+    overflow: hidden;
+    margin: 10px;
+	margin-left:130px;
+	
+}
+
+.small-news-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+        .small-news-left {
+            left: 0;
+        }
+
+        .small-news-right {
+            right: 0;
+            margin-right: 140px;
+        }
+
+        .small-news-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .small-news-title {
+            position: absolute;
+            bottom: 50px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 20px;
+            padding: 5px;
+            overflow: hidden; /* Ẩn phần chữ tràn ra ngoài */
+    word-wrap: break-word; 
+        }
+
+        .small-news-title a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .small-news-title a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<article layout:fragment="content">
+    <div th:each="news, iterStat : ${newsList}" class="news-item">
+        <div class="news-image-container">
+            <img class="news-image" th:src="@{'/getimage/' +${news.image}}" alt="News Image">
+            <div class="news-title">
+                <a th:text="${news.title}"></a>
+                 
+            </div>
+            <div class ="continue">
+            	<a th:href="@{/web/news/details/{id} (id=${news.id})}">Xem thêm... </a>
+            </div>
+            
+            <div class="dots">
+                <div class="dot" onmouseover="showImage(0)"></div>
+                <div class="dot" onmouseover="showImage(1)"></div>
+                <div class="dot" onmouseover="showImage(2)"></div>
+                <div class="dot" onmouseover="showImage(3)"></div>
+            </div>
+        </div>
+    </div>
+     
+    <div th:each="news, iterStat : ${newsList}"  class="small-news-container news-item" id="small-news-container-1">
+    <img id="small-news-image-1" class="small-news-image" th:src="@{'/getimage/' +${news.image}}" alt="Small News Image 1">
+    <div class="small-news-title">
+        <a th:text="${news.title}" id="small-news-link-1" th:href="@{/web/news/details/{id} (id=${news.id})}"></a>
+    </div>
+</div>
+
+
+    <script>
+    
+        var currentImageIndex = 0;
+        showImage(currentImageIndex);
+
+        function showImage(index) {
+            currentImageIndex = index;
+            var newsItems = document.querySelectorAll('.news-item');
+            var selectedNewsItem = newsItems[index];
+            var selectedImage = selectedNewsItem.querySelector('.news-image');
+            var selectedTitle = selectedNewsItem.querySelector('.news-title');
+            // Show corresponding image and title
+            selectedNewsItem.style.position = 'static'; // Reset item position
+            selectedImage.style.transform = 'scale(1.1)';
+            selectedTitle.style.opacity = 1;
+
+            // Hide other items
+            newsItems.forEach(function(item) {
+                if (item !== selectedNewsItem) {
+                    var image = item.querySelector('.news-image');
+                    var title = item.querySelector('.news-title');
+
+                    item.style.position = 'absolute';
+                    item.style.top = '-9999px';
+                    image.style.transform = 'scale(1)';
+                    title.style.opacity = 0;
+                }
+            });
+        }
+
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % document.querySelectorAll('.news-item').length;
+            showImage(currentImageIndex);
+        }
+
+        function updateSmallNewsImages() {
+            var newsItems = document.querySelectorAll('.news-item');
+
+            // Ensure at least six articles are present
+            for (var i = 1; i <= 6; i++) {
+                if (newsItems.length >= i) {
+                    var newsItem = newsItems[i - 1];
+                    var imageSrc = newsItem.querySelector('.news-image').src;
+                    var title = newsItem.querySelector('.news-title a').textContent;
+                    var link = newsItem.querySelector('.continue a').href; // Lấy link từ "Xem thêm..."
+
+                    document.getElementById('small-news-image-' + i).src = imageSrc;
+                    document.getElementById('small-news-link-' + i).textContent = title;
+                    document.getElementById('small-news-link-' + i).href = link;
+                }
+            }
+        }
+
+        updateSmallNewsImages();
+        setInterval(nextImage, 3000);
+    </script>
+</article>
+</body>
+</html>
+
+
+
+
+

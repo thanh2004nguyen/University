@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{/layout}">
+<head>
+<title>Content</title>
+</head>
+<body>
+
+	<div layout:fragment="content" class="card ml-4" style="width: 100%">
+
+		<h3 class="card-head text-center" th:text="#{discuss.edithead}"></h3>
+
+
+		<form th:action="@{'/web/discuss/edit/'+${data.id}}" th:object="${data}"
+			class="card-body" method="post" style="width: 100%">
+			
+		
+			<div class="input-group mt-5 ">
+				<div class="input-group-prepend">
+					<span class="input-group-text" th:text="#{label.name}" id="inputGroup-sizing-default">Name</span>
+				</div>
+				<input th:field="*{name}" class="form-control" aria-label="Default"
+					aria-describedby="inputGroup-sizing-default">
+			</div>
+			
+			
+
+			<div class="input-group mt-5">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="inputGroup-sizing-default" th:text="#{discuss.topic}">Topic</span>
+				</div>
+				<input th:field="*{topic}" class="form-control" aria-label="Default"
+					aria-describedby="inputGroup-sizing-default">
+			</div>
+			
+
+<div class="input-group mt-5">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default" th:text="#{discuss.expired}">expired</span>
+    </div>
+    <input th:field="*{expried_text}"  th:value="*{expried_text}" class="form-control" aria-label="Default"
+           aria-describedby="inputGroup-sizing-default">
+    
+</div>
+
+
+<div class="mt-5">
+<div class="form-check form-check-inline">
+  <input class="form-check-input input_by_radio" type="radio"  
+  th:field="*{type}"
+  name="type_time_expried" 
+  value="minute">
+  <label class="form-check-label" for="inlineRadio1" th:text="#{discuss.minute}">By minute</label>
+</div>
+
+<div class="form-check form-check-inline" >
+  <input class="form-check-input input_by_radio" type="radio" th:field="*{type}"
+  name="type_time_expried"  
+  value="hour">
+  <label class="form-check-label" for="inlineRadio2" th:text="#{discuss.hour}">By hour</label>
+</div>
+
+<div class="form-check form-check-inline">
+  <input class="form-check-input input_by_radio" type="radio" th:field="*{type}"
+  name="type_time_expried"  
+  value="day">
+  <label class="form-check-label" for="inlineRadio2" th:text="#{discuss.day}">By day</label>
+</div>
+</div>
+
+
+
+<div class="input-group  mt-5" id="minuteInput" style="display:none;" >
+  <div class="input-group-prepend">
+    <span class="input-group-text" th:text="#{discuss.expired}">Time expired</span>
+  </div>
+  <input  th:field="*{expried_date}"
+  type="number" max="60" 
+  class="form-control"
+   aria-label="Amount (to the nearest dollar)">
+  <div class="input-group-append">
+    <span class="input-group-text" id="span_show_type_edit_minute" th:text="#{discuss.minute}">By minute</span>
+     <span class="input-group-text" id="span_show_type_edit_day" th:text="#{discuss.day}">By day</span>
+      <span class="input-group-text" id="span_show_type_edit_hour" th:text="#{discuss.hour}">By hour</span>
+  </div>
+</div>
+
+
+
+
+
+
+<button type="submit" class="btn btn-primary mt-5" th:text="#{label.update}"> Create</button>
+
+
+
+		</form>
+	</div>
+</body>
+</html>

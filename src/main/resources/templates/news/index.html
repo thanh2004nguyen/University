@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{adminLayout/adminLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Manage</title>
+    <style>
+  
+        .sidebar {
+            width: 250px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            background-color: #f2f2f2;
+            padding: 10px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 10px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        .create-news a
+        {
+        	font-size :24px;
+        	color:black;	
+        }
+		.create-news a:hover
+		{
+			color:lightblue;
+		}
+
+        
+        
+            .merged-cell {
+        background-color: lightblue; /* Set your desired background color */
+    }
+    </style>
+</head>
+<body >
+<article layout:fragment="content"  >
+<div class="create-news">
+	<a th:href="@{/news/create}">Create News</a>
+</div>
+<br>
+
+
+
+        <table class="table  border card-body" id="class_for_subject_table">
+            <thead class="bg bg-primary">
+                <tr>
+                    <th class="title-margin">#</th>
+                    <th class="title-margin" >Title </th>
+				     <th class="title-margin">Image </th>
+				     <th class="title-margin" >createDate </th>
+				     <th class="title-margin">Action </th>
+				   
+
+                </tr>
+            </thead>
+            <tbody>
+				<tr th:each="item,rowStat : ${newsList}">
+				<td class="text-center" th:text="${rowStat.index + 1}"></td>
+					<td class="text-center" th:text="${item.title}" ></td>
+					
+					<td class="text-center" ><img style="height: 100px;width:100px" class="news-image" th:src="@{${'/getimage/' +item.image}}" ></td>
+					<td class="text-center" th:text="*{#dates.format(item.createDate, 'dd-MM-yyyy')}"   ></td>
+					<td class="text-center"><a class="btn btn-warning" th:href="@{/admin/news/update/{id}(id=${item.id})}"  title="Update"
+        > <i class="fas fa-edit"></i></a>
+        
+               <a class="btn btn-danger" th:href="@{/admin/news/delete/{id}(id=${item.id})}"  title="Delete"
+        > <i class="fas fa-trash"></i></a> </td>
+					
+					
+					
+			
+
+			</tbody>
+        </table>
+</article>
+      
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Create Semester</title>
+<style>
+.subject-level {
+	cursor: pointer;
+	background-color: #d1e5f0;
+	color: Black;
+	padding: 10px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	font-size: 25px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.subject-level:hover {
+	background-color: #d1e5f0;
+}
+
+.hidden {
+	display: none;
+}
+</style>
+</head>
+<body>
+	<article layout:fragment="content"
+		class="d-flex align-items-center flex-column">
+		<h2>Create New Semester</h2>
+		<div th:if="${error}" class="alert alert-info" id="error"
+			style="height: 50px; background: white;">
+			<p th:text="${error}" class="error" style="text-align: center"></p>
+		</div>
+		<div th:if="${message}" class="alert alert-info">
+			<p th:text="${message}"></p>
+		</div>
+
+		<div th:if="${errorMessage}" class="error-message">
+			<p style="color: red" th:text="${errorMessage}"></p>
+		</div>
+
+
+		<form th:action="@{/admin/semester/create}" method="post" style="width: 70%"
+			th:object="${data}" id="semester_form_create">
+
+			<div class="input-group mb-5">
+				<div class="input-group-prepend" style="width: 150px">
+				
+					<label style="width: 100%" class="input-group-text" for="name">Semester</label>
+				</div>
+				
+				<!-- <input type="number" th:field="*{name}" class="form-control"
+					id="name" placeholder="Name"/> -->
+					<select id="select_semester" name="name" class="form-control" required>
+					<option th:value="0">Select Semester</option>
+					<option th:value="1">1</option>
+					<option th:value="2">2</option>
+				</select> <br>
+			</div>
+			<br>
+			<!-- <span>Name: </span><input type="number" name="name" /><br>  -->
+
+
+			<!-- <span>Year</span><input
+				type="number" name="year" /><br> -->
+			<div>
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text"
+							for="day_start">Date Start</label>
+					</div>
+					<input type="date" class="form-control" th:field="*{daystart}"
+						id="day_start" placeholder="Date_Start" name="daystart"/>
+						
+				</div>
+
+			</div>
+			<br>
+			<!-- <span>Date Start</span><input type="date" class="form-control" aria-label="Default"/> -->
+			<div>
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="day_end">Date
+							End</label>
+					</div>
+					<input type="date" class="form-control" th:field="*{dayend}"
+						id="day_end" placeholder="Date_End" name="dayend"/>
+						
+				</div>
+
+			</div>
+			<br>
+
+
+			<button type="submit" class="btn btn-primary mt-5"
+				th:text="#{label.create}">Create</button>
+		</form>
+		<script>
+		document.addEventListener('DOMContentLoaded', function () {
+            const dateInput = document.getElementById('day_start');
+            const semesterSelect = document.getElementById('select_semester');
+
+            semesterSelect.addEventListener('change', () => {
+                // Replace with the actual start day of the semester
+                const startDay = '2024-06-01'; // Example start date
+                let date = new Date(startDay);
+
+                // Show the date input
+                dateInput.parentElement.parentElement.style.display = 'block';
+
+                // Find the first Monday on or after the start date
+                let firstMonday = new Date(date);
+                let dayOfWeek = firstMonday.getUTCDay();
+                if (dayOfWeek !== 1) { // 1 corresponds to Monday
+                    const daysUntilMonday = (8 - dayOfWeek) % 7;
+                    firstMonday.setDate(firstMonday.getDate() + daysUntilMonday);
+                }
+
+                let next6day = new Date(firstMonday);
+                next6day.setDate(next6day.getDate() + 6);
+
+                const min = firstMonday.toISOString().split('T')[0];
+                const max = next6day.toISOString().split('T')[0];
+
+                dateInput.setAttribute('min', min);
+                dateInput.setAttribute('max', max);
+            });
+
+            dateInput.addEventListener('change', function () {
+                const selectedDate = new Date(this.value);
+                const day = selectedDate.getUTCDay();
+
+                if (day !== 1) { // 1 corresponds to Monday
+                    alert('Please select a Monday.');
+                    this.value = ''; // Reset the value if it's not a Monday
+                }
+            });
+        });
+    </script>
+	</article>
+	
+</body>
+</html>

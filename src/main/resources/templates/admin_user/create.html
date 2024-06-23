@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<title>Create</title>
+<meta charset="utf-8">
+</head>
+<body>
+
+	<div layout:fragment="content"
+		class="d-flex align-items-center flex-column">
+		<h2
+			style="color: rebeccapurple; font-family: 'georgia'; padding: 30px 0px 30px 0px; font-weight: 300; font-size: 40px;"
+			th:text="#{user.create.title}">Create
+			new account</h2>
+			<form th:action="@{upload}" method="post" id="submitUploadFile"
+					style="width: 25%;float:right;" enctype="multipart/form-data">
+					<!-- 	Ẩn input thực sự và sử dụng label để tạo nút giả mạo -->
+					<input type="file" name="file" id="fileInput" accept=".xlsx, .xls"
+						style="display: none;"> <label for="fileInput"
+						th:text="#{user.list.importexcel}"
+						style="cursor: pointer; color: white; padding: 0 10px; background: green; width: auto; height: 35px; border-radius: 7px; line-height: 35px; margin: 10px">
+						<i class="left-pan fa file-import"></i>
+					</label>
+				</form>
+<input th:if="${error}" type="hidden" id="check_error_create_account">
+		<div class="input-group mb-5">
+			<div class="input-group-prepend" style="width: 150px">
+				<label style="width: 100%" class="input-group-text" for="role">Role</label>
+			</div>
+			<select class="form-control" id="account_create_select_role"
+				name="role" required>	
+				<option th:attr="selected=${data.role == ' '}" value=" " th:text="#{label.user.chooserole}">select
+					role for account</option>
+				<option th:attr="selected=${data.role == 'STUDENT'}" value="STUDENT">Student</option>
+				<option th:attr="selected=${data.role == 'TEACHER'}" value="TEACHER">Teacher</option>
+				<option th:attr="selected=${data.role == 'EMPLOYEE'}"
+					value="EMPLOYEE">Employee</option>
+			</select>
+		</div>
+
+
+		<!-- STUDENT -->
+		<form style="width: 70%; display: none"
+			id="student_form_create_account" th:action="@{/admin/user/create}"
+			method="post" th:object="${data}" enctype="multipart/form-data">
+			
+			<input type="hidden" id="hidden_role_data_create" th:field="*{role}" />
+			<div>
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="email">Email</label>
+					</div>
+					<input type="email" th:field="*{email}" class="form-control"
+						id="email" placeholder="Email">
+				</div>
+				<p style="color:red;" th:text="${error}"></p>
+				<p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+					class="text-danger"></p>
+				
+
+				<div class="input-group mb-3">
+					<p th:text="${msphoner}" class="error" style="text-align: center"></p>
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="phone">Phone</label>
+					</div>
+					<input type="number" th:field="*{phone}" class="form-control"
+						id="phone" placeholder="Phone">
+				</div>
+
+				<p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"
+					class="text-danger">Name Error</p>
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="name" th:text="#{label.user.name}">Name</label>
+					</div>
+					<input type="text" th:field="*{name}" class="form-control"
+						id="name" placeholder="Name">
+				</div>
+				<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+					class="text-danger"></p>
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="address">Address</label>
+					</div>
+					<input type="text" th:field="*{address}" class="form-control"
+						id="address" placeholder="Address">
+				</div>
+				<p th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
+					class="text-danger">Name Error</p>
+
+
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="name">Avatar</label>
+					</div>
+					<input type="file" name="image" class="form-control" id="avatar"
+						placeholder="Avatar">
+				</div>
+
+
+
+
+				<!-- Include other necessary fields such as phone, address, etc. -->
+				<div class="input-group mb-3" style="display: none;">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="password">Password</label>
+					</div>
+					<input type="password" th:field="*{password}" class="form-control"
+						id="password" placeholder="Password">
+				</div>
+
+
+
+				<!-- Include other necessary fields such as role, avatar, etc. -->
+				<input class="btn btn-primary" th:value="#{label.user.create}" type="submit" />
+			</div>
+		</form>
+
+
+
+		<!-- TEACHER form_create_user -->
+		<form id="teacher_form_create_account"
+			style="width: 70%; display: none" th:action="@{/admin/user/create}"
+			method="post" th:object="${data}" enctype="multipart/form-data">
+			<input type="hidden" id="hidden_role_data_create_teacher"
+				th:field="*{role}" />
+
+
+
+			<div>
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="email">Email</label>
+					</div>
+					<input type="email" th:field="*{email}" class="form-control"
+						id="email" placeholder="Email">
+					<div th:if="${message}" class="alert alert-info">
+						<p th:text="${message}"></p>
+					</div>
+
+				</div>
+				<p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+					class="text-danger">Name Error</p>
+				
+				<div class="input-group mb-3">
+					<p th:text="${msphoner}" class="error" style="text-align: center"></p>
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="phone">Phone</label>
+					</div>
+					<input type="number" th:field="*{phone}" class="form-control"
+						id="phone" placeholder="Phone">
+				</div>
+
+				<p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"
+					class="text-danger">Name Error</p>
+
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="name">Name</label>
+					</div>
+					<input type="text" th:field="*{name}" class="form-control"
+						id="name" placeholder="Name">
+				</div>
+				<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+					class="text-danger">Name Error</p>
+
+				<!-- Include other necessary fields such as phone, address, etc. -->
+				<div class="input-group mb-3" style="display: none;">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="password">Password</label>
+					</div>
+					<input type="password" th:field="*{password}" class="form-control"
+						id="password" placeholder="Password">
+				</div>
+
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="name">Avatar</label>
+					</div>
+					<input type="file" name="image" class="form-control" id="avatar"
+						placeholder="Avatar">
+				</div>
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 21%">
+						<label style="width: 100%" class="input-group-text" for="field">Field</label>
+					</div>
+					<select class="select2" name="field[]" multiple style="width: 79%;">
+						<option th:each="field, fieldStat : ${fields}"
+							th:value="${field.id}"
+							th:text="${fieldStat.index + 1 + '. ' + field.name}"></option>
+					</select>
+				</div>
+				<p th:if="${#fields.hasErrors('fields')}" th:errors="*{fields}"
+					class="text-danger"></p>
+
+				<!-- Include other necessary fields such as role, avatar, etc. -->
+				<input class="btn btn-primary" th:value="#{label.user.create}" type="submit" />
+			</div>
+		</form>
+
+
+
+
+
+		<!-- Employee form_create_user -->
+		<form id="employee_form_create_account"
+			style="width: 70%; display: none" th:action="@{/admin/user/create}"
+			method="post" th:object="${data}" enctype="multipart/form-data">
+			<input type="hidden" id="hidden_role_data_create_employee"
+				th:field="*{role}" />
+
+
+
+			<div>
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="email">Email</label>
+					</div>
+					<input type="email" th:field="*{email}" class="form-control"
+						id="email" placeholder="Email">
+					<div th:if="${message}" class="alert alert-info">
+						<p th:text="${message}"></p>
+					</div>
+				</div>
+				<p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+					class="text-danger"></p>
+				
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="phone">Phone</label>
+					</div>
+					<input type="number" th:field="*{phone}" class="form-control"
+						id="phone" placeholder="Phone">
+				</div>
+
+				<p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"
+					class="text-danger"></p>
+
+
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="name">Name</label>
+					</div>
+					<input type="text" th:field="*{name}" class="form-control"
+						id="name" placeholder="Name">
+				</div>
+				<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+					class="text-danger"></p>
+
+
+
+				<!-- Include other necessary fields such as phone, address, etc. -->
+				<div class="input-group mb-3" style="display: none;">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="password">Password</label>
+					</div>
+					<input type="password" th:field="*{password}" class="form-control"
+						id="password" placeholder="Password">
+				</div>
+
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 150px">
+						<label style="width: 100%" class="input-group-text" for="name">Avatar</label>
+					</div>
+					<input type="file" name="image" class="form-control" id="avatar"
+						placeholder="Avatar">
+				</div>
+
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend" style="width: 21%">
+						<label style="width: 100%" class="input-group-text" for="field">Field</label>
+					</div>
+					<select class="select2" name="field[]" multiple style="width: 79%;">
+						<option th:each="field, fieldStat : ${fields}"
+							th:value="${field.id}"
+							th:text="${fieldStat.index + 1 + '. ' + field.name}"></option>
+						<!-- Thêm các option khác nếu cần -->
+					</select>
+				</div>
+								<p th:if="${#fields.hasErrors('fields')}" th:errors="*{fields}"
+					class="text-danger"></p>
+				<!-- Include other necessary fields such as role, avatar, etc. -->
+				<input class="btn btn-primary" th:value="#{label.user.create}" type="submit" />
+			</div>
+		</form>
+
+
+
+	</div>
+
+
+</body>
+</html>

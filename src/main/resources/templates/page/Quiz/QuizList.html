@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+layout:decorate="~{/layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>University Planner - UniHub</title>
+<link rel="stylesheet" href="styles.css">
+<style type="text/css">
+
+body, h1, h2, h3, p {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center; /* Align text to the left for a more traditional look */
+    border: 1px solid #ddd; /* Subtle border */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06); /* Soft shadow for depth */
+    background-color:#c2ebf0;
+          max-height: 600px;
+        overflow-y: auto; 
+}
+header h1 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.module-count {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 16px; /* Slightly larger font size */
+}
+
+.module-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.module {
+    height:100px;
+    background-color:#9eb5b8;
+    border-radius: 5px; /* Less pronounced border-radius */
+    padding: 15px; /* Adequate padding */
+    font-size: 30px; /* Readable font size */
+    color: #333; /* Darker text for better readability */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow */
+    transition: transform 0.2s ease; /* Smooth transition for hover effect */
+}
+
+.module:hover {
+    transform: translateY(-3px); /* Slight lift on hover */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Shadow increases on hover */
+}
+
+/* For responsive design */
+@media (max-width: 640px) {
+    .container {
+        margin: 10px;
+        padding: 10px;
+    }
+    /* Adjust font sizes for smaller screens as needed */
+}
+
+    .content-container {
+           background-color:#C1D8C3;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+
+    .quiz-list {
+    
+        border-radius: 15px;
+        padding: 20px;
+        font-size: 14px;
+        color: #333;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100px;
+        margin-bottom: 20px;
+    }
+    
+        .flex-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-start;
+    }
+
+    .container, .quiz-list-container {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .quiz-list-container {
+        background-color:#c2ebf0; /* For visibility */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-radius: 5px;
+  
+        width: 500px; /* Adjust width as needed */
+        border: 2px solid #000;
+        max-width: 900px;
+        padding: 20px;
+        text-align: center;
+        display: none;
+        max-height: 600px;
+        overflow-y: auto; 
+    }
+
+    .quiz-item {
+        background-color: #f9f9f9; 
+        border: 1px solid #ddd;
+        margin-bottom: 10px; 
+        padding: 15px;
+        border-radius: 5px; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .time-ended {
+    background-color: #ff6347; /* Red color */
+    color: white; /* Text color */
+}
+
+.active-module {
+    background-color: #8bd5f0; /* or any color you like */
+}
+</style>
+</head>
+<body layout:fragment="content">
+
+<!-- Error Message here  -->
+<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<div class="flex-container">
+    <!-- Class List Container -->
+    <div class="container">
+        <header>
+            <h3>LIST CLASS THIS SEMESTER</h3>
+            <div class="module-count"></div>
+        </header>
+        <div class="module-grid">
+            <!-- Class modules here -->
+    <div class="module" th:each="list:${listClass}" th:data-class-id="${list.classforSubject.id}" th:onclick="'showQuizList(\'' + ${list.classforSubject.id} + '\')'">
+    <div th:text="${list.classforSubject.Subject.name} + '  ' + ${list.classforSubject.name}"></div>
+</div>
+        </div>
+    </div>
+
+    <!-- Quiz List Container, now to the right of the Class List Container -->
+    <div class="quiz-list-container" id="quizListContainer">
+      
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// Function to show the quiz list for the selected class
+function showQuizList(classId) {
+     var isOnprocess = false; 
+    var modules = document.querySelectorAll('.module');
+    modules.forEach(function(module) {
+        module.classList.remove('active-module');
+    });
+
+    modules.forEach(function(module) {
+        if (module.getAttribute('data-class-id') === classId.toString()) {
+            module.classList.add('active-module');
+        }
+    });
+
+// auto update status Quiz Exam
+    var xhrfirst = new XMLHttpRequest();
+    var urlfirst = '/api/public/Quiz/AutoUpdateQuizExam';
+    xhrfirst.open('POST', urlfirst, true);
+    xhrfirst.setRequestHeader('Content-Type', 'application/json');
+    xhrfirst.onreadystatechange = function () {
+        if (xhrfirst.status === 200) {
+                   console.log("Update successfully!!");
+        }
+    };
+    var datafirst = JSON.stringify({ classId: classId });
+    xhrfirst.send(datafirst);
+
+    
+
+    // call api1
+    var xhr = new XMLHttpRequest();
+    var url = '/api/public/Quiz/ListExam';
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.status === 200) {
+            var quizzes = JSON.parse(xhr.responseText);
+            if (quizzes.length > 0) {
+                for (var i = 0; i < quizzes.length; i++) {
+                    var quiz = quizzes[i];
+       
+                    if(quiz.status === 'OnProcess')
+                        {
+                    	isOnprocess = true;                       
+                        }                   
+                }
+                  
+            } else {
+    
+            }
+        }
+    };
+    var data = JSON.stringify({ classId: classId });
+    xhr.send(data);
+
+    // call APi2
+    
+
+    var xhr2 = new XMLHttpRequest();
+    var url2 = '/web/quiz/listQuizByClass?classId=' + classId;
+    xhr2.open('GET', url2, true);
+    xhr2.setRequestHeader('Content-Type', 'application/json');
+    xhr2.onreadystatechange = function () {
+        if (xhr2.status === 200) {
+
+            var quizzes = JSON.parse(xhr.responseText);
+            if (quizzes.length > 0) {
+                var quizListHtml = quizzes.map(function(quiz) {
+                    var currentTime = new Date().getTime();
+                    var disabled = false; // Default to not disabled
+                    var buttonText = 'Start Quiz';
+                    var buttonClass = '';
+
+                    let quizType;
+                    switch (quiz.quiz.type) {
+                        case "1":
+                            quizType = 'Final Exam';
+                            break;
+                        case "2":
+                            quizType = 'Middle Exam';
+                            break;
+                        case "3":
+                            quizType = 'First Exam';
+                            break;
+                        default:
+                            quizType = 'Unknown Type';
+                    }
+                    
+
+                    // Check if the quiz has ended based on endTime
+                    if (quiz.endDate) {
+                        var endTime = new Date(quiz.endDate);
+                        var endTimeMilliseconds = endTime.getTime();
+                        disabled = currentTime > endTimeMilliseconds;
+                        buttonText = disabled ? 'Time Ended' : 'Start Quiz';
+                        buttonClass = disabled ? 'time-ended' : '';
+                    }
+
+                    // Additional condition for quiz status being 'Submitted'
+                    if (quiz.status === "Submitted") {
+                        disabled = true;
+                        buttonText = 'Finished';
+                        buttonClass = 'time-ended'; // Reusing the class for finished quizzes
+                    }
+
+                    if(isOnprocess === true)
+                        {
+                        if(quiz.status === "OnProcess" )
+                        {
+                        disabled = false;
+                        buttonText = 'Continue Do Quiz';
+                        }
+                        if(quiz.status === "Wait")
+                        {        
+                            disabled = true;
+                            buttonText = 'Another Quiz Onprocess';
+                            buttonClass = 'time-ended';
+                        }
+                        }
+
+                    return `
+                        <div class="quiz-item">
+                            <h3>${quiz.classForSubject.name} - ${quiz.classForSubject.subject.name}</h3>
+                            <p>Type Exam: ${quizType}  </p>
+                            <p>Name: ${quiz.quiz.name}  </p>
+                            <p>Quiz Duration: ${quiz.quiz.duration} Minute </p>
+                            <button onclick="startQuiz('${quiz.quiz.id}')" ${disabled ? 'disabled' : ''} class="${buttonClass}">${buttonText}</button>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                quizListHtml = '<div class="no-quiz-message">YOU DONT HAVE ANY QUIZ!!!</div>';
+            }
+
+            // Update the quiz list container with the fetched quizzes
+            var quizListContainer = document.getElementById('quizListContainer');
+            quizListContainer.innerHTML = quizListHtml;
+            quizListContainer.style.display = 'block'; 
+        }
+    };
+    xhr2.send();
+
+
+    
+    }
+
+// Function to prompt the user to start the quiz
+function startQuiz(quizId) {
+    Swal.fire({
+        title: 'Are you ready to start the quiz?',
+        text: "Make sure you're in the right place and ready to begin.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Start Quiz'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            console.log(quizId);
+            window.location.href = '/web/quiz/doquiz?quizId=' + quizId;
+        }
+    });
+}
+</script>
+
+</body>
+</html>

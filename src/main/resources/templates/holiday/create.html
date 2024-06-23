@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<title>Content</title>
+</head>
+<body>
+
+	<div layout:fragment="content" class="card ml-4" >
+
+		<h3 class="card-head text-center mt-3" th:text=" #{holiday.head.create} +${semester.year} + ' - ' + ${semester.year +1}"></h3>
+
+
+		<form th:action="@{/admin/holiday/create}" th:object="${data}"
+			class="card-body" method="post" style="width: 100%">
+
+
+			<div class="input-group  ">
+				<div class="input-group-prepend">
+					<span class="input-group-text" th:text="#{label.name}"
+						id="inputGroup-sizing-default">Name</span>
+				</div>
+				<input th:field="*{name}" class="form-control" aria-label="Default"
+					aria-describedby="inputGroup-sizing-default">
+			</div>
+			
+			<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger ">Name Error</p>
+
+		
+
+<div class="mt-5">
+<span th:text="#{holiday.chose.type}">Chose type : </span>
+				<div class="form-check form-check-inline">
+					<input checked class="form-check-input radio_check_type_holiday" type="radio"
+						name="type_time_expried" th:field="*{type}" value="one">
+					<label class="form-check-label" for="inlineRadio2" th:text="#{holiday.oneday}" >One day</label>
+				</div>
+
+				<div class="form-check form-check-inline">
+					<input class="form-check-input radio_check_type_holiday" type="radio"
+						name="type_time_expried" th:field="*{type}" value="many"> <label
+						class="form-check-label" for="inlineRadio2" th:text="#{holiday.many}"
+						>Many day</label>
+				</div>
+			</div>
+			
+			<p th:if="${#fields.hasErrors('type')}" th:errors="*{type}" class="text-danger ">Name Error</p>
+
+<div class="mt-5"  style="display:none" id="input_start_holiday_create">
+<div class="input-group  ">
+				<div class="input-group-prepend">
+					<span class="input-group-text" 
+						id="inputGroup-sizing-default" th:text="#{holiday.date.start}">date start</span>
+				</div>
+				<input id="input_date_start_create_holiday" th:field="*{dateStart}" type="date" class="form-control" aria-label="Default"
+					aria-describedby="inputGroup-sizing-default">	
+			</div>
+			<p th:if="${#fields.hasErrors('dateStart')}" th:errors="*{dateStart}" class="text-danger ">Name Error</p>	
+</div>
+
+
+			<div class=" mt-5 "  id="input_end_holiday_create">
+			<div class="input-group" >
+				<div class="input-group-prepend">
+					<span class="input-group-text" 
+						id="inputGroup-sizing-default" th:text="#{holiday.date.end}">date end</span>
+				</div>
+							<input id="input_date_end_create_holiday" th:field="*{dateEnd}" type="date" class="form-control" aria-label="Default"
+						disabled aria-describedby="inputGroup-sizing-default" >
+			</div>
+			<p th:if="${#fields.hasErrors('dateEnd')}" th:errors="*{dateEnd}" class="text-danger ">Name Error</p>	
+			</div>
+			
+		<div class="mt-5">
+				<input id="toggle_select_class_create_holiday"  type="checkbox">	<span> Holiday for specific class</span>
+		</div>	
+
+
+		<div class="input-group mt-5" id="wraper_class_selece_create_hiliday" style="display:none">
+			<div class="input-group-prepend" style="width: 150px">
+				<label style="width: 100%" class="input-group-text"
+					for="inputGroupSelect01 " th:text="#{holiday.class.select}">Select class</label>
+			</div>
+			
+		<select  th:field="*{classIdHoliday}" class="form-control">
+				<option value=" " th:text="#{holiday.class.select}">Select class</option>
+				<option th:each="s : ${classes}" th:text="${s.name}"
+					th:value="${s.id}"></option>
+
+			</select>
+
+		</div>
+		
+		<input th:field="*{year}"  type="hidden" value="0">
+
+			<button type="submit" class="btn btn-primary mt-5"
+				th:text="#{label.create}">Create</button>
+
+
+
+		</form>
+	</div>
+</body>
+</html>

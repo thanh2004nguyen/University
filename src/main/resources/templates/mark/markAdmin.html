@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{/adminLayout/adminLayout}">
+<head>
+<title>Admin Marks</title>
+</head>
+<body>
+    <div layout:fragment="content" class="ttttable table-bordered mt-3" style="transform:translateY(1%);">
+        <div class="card-header" style="width: 100%; color: rebeccapurple; font-family: 'georgia';font-weight: 300;top:0px;">
+            <h3 style="text-align: center; font-weight: bold; font-size: 40px; text-transform: uppercase;">Mark Administration</h3>
+        </div>
+<input th:if="${error=='SUCCESS'}" class="show_success_toast" readonly
+			type="hidden" th:value="#{toast.success.update}"> 
+			  <!-- Toast container -->
+            <div id="toastContainer" style="position: absolute; top: 0; right: 0; z-index: 1050;"></div>
+
+            <!-- Toast template -->
+            <div class="toast" id="toastTemplate" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000" style="margin-top:50px; min-width:150px;">
+                <div class="toast-header">
+                    <strong class="mr-auto toast-title">Notification</strong>
+                    <small class="text-muted toast-time">just now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    Mark updated successfully.
+                </div>
+            </div>
+		<div class="row height d-flex justify-content-center align-items-center">
+		    <div class="col-md-6" style="margin: 40px 0 -30px 0;">
+		        <form action="/admin/mark/searchmark" method="get" class="form">
+		            <i class="fa fa-search"></i> 
+		            <input type="text" class="form-control form-input" name="className" th:placeholder="#{label.user.search}">
+		            <button type="submit" class="left-pan fa fa-search"></button>
+		        </form>
+		    </div>
+		</div>
+		<br/>
+		<br/>
+        <div th:if="${#authorization.expression('hasAuthority(''EMPLOYEE'')')}">
+            <div class="d-flex align-items-center justify-content-between"
+			style="padding:0 100px;">
+            <div>
+                <span th:text="#{label.semester} + ' : '">Semester :</span>
+                <select name="semester" id="select_semeser_mark_admin"style="height: 30px;">
+                    <option th:each="se : ${semesters}"
+                            th:selected="${currentSemester == se.id}"
+                            th:value="${se.id}"
+                            th:text="${se.name} + ' ' + ${se.year} + '-' + (${se.year} + 1)">
+                    </option>
+                </select>
+            </div>
+	        <div th:if="${#authorization.expression('hasAuthority(''EMPLOYEE'')')}" style="display: flex;margin-top:20px;">
+	            <form id="classForm">
+	                <label for="classId">Chọn Lớp:</label>
+	                <select id="classId" name="classId" style="height: 30px;">
+	                    <option value="">Chọn lớp</option>
+	                    <option th:each="class : ${classes}" th:value="${class.id}" th:text="${class.name}" th:selected="${class.id} == ${selectedClassId}"></option>
+	                </select>
+	            </form>
+	            <a href="#" id="exportButton" class="btn btn-primary" style="margin:0 0 15px 5px">Export to Excel</a>
+	        </div>
+	        </div>
+            <table class="table border card-body" id="class_for_subject_table">
+                <thead class="bg-primary">
+                    <tr>
+                        <th>#</th>
+                        <th class="text-center" th:text="#{label.name}">Name</th>
+                        <th class="text-center" th:text="#{class.quantity}">Quantity</th>
+                        <th class="text-center" th:text="#{label.teacher}">Teacher</th>
+                        <th class="text-center" th:text="#{label.room}">Room</th>
+                        <th class="text-center" th:text="#{label.status}">Status</th>
+                        <th class="text-center" th:text="#{label.action}">Action</th>
+                    </tr>
+                </thead>
+                <tbody th:each="s, iterStat : ${classSubjects}" th:object="${s}">
+                    <tr th:classappend="${s.id % 2 == 0 ? 'table-active' : ''}">
+                        <td class="text-center" th:text="${iterStat.index + 1}"></td>
+                        <td class="text-center" th:text="*{name}"></td>
+                        <td class="text-center" th:text="*{quantity}"></td>
+                        <td class="text-center" th:text="*{teacher.name}"></td>
+                        <td class="text-center" th:text="*{room.name}"></td>
+                        <td class="text-center" th:text="*{status}"></td>
+                        <td class="text-center">
+                            <a class="btn btn-insert" th:href="@{'/admin/mark/insert/' + *{id}}" data-toggle="tooltip" data-placement="top" title="Insert mark">
+                                <i class="fas fa-download"></i>
+                            </a>
+                            <a class="btn btn-insert" th:href="@{'/admin/mark/edit/' + *{id}}" data-toggle="tooltip" data-placement="top" title="Edit mark">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

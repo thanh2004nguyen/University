@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<title>Create</title>
+ <meta charset="utf-8">
+ 
+ <style type="text/css">
+ .hiddne_div_create{
+ display:none;
+ }
+ 
+
+ </style>
+</head>
+<body>
+
+	<div layout:fragment="content"
+		class="d-flex align-items-center flex-column card p-3 w-100">
+
+
+		<h2 th:text="#{class.create.head}">Create new class</h2>
+		<input id="error_create_class_hidden" th:value="${error}" type="hidden">
+		<div class="mb-3">
+			<span  th:text="#{label.semester} + ' : '"> semester :</span> <span
+				th:text="#{label.semester} + ${semester.name} + ' ' + ${semester.year} + '-' + (${semester.year} + 1)"></span>
+			<input th:value="${semester.day_start}" id="semester_start_create"
+				th:data-id="${semester.id}" type="hidden" readonly />
+		</div>
+	
+	<input type="hidden" id="check_error_if_has" value="${error}">
+
+		<div class="input-group mb-3 " style="width: 80%">
+			<div class="input-group-prepend" style="width: 150px">
+				<label style="width: 100%" class="input-group-text"
+					for="inputGroupSelect01" th:text="#{label.select.subject}" >Select subject</label>
+			</div>
+			
+			
+			
+			<select class="custom-select select_subject_create " id="inputGroupSelect01">
+    <option th:value="0" th:selected="${data.subject_id == 0 ||dataAll.subject_id==0}" th:text="#{label.select.subject}" >select subject</option>
+    
+    <option th:each="s : ${subjects}" th:data-id="${s.id}" th:data-check="${s.type}"
+            th:selected="${s.id == data.subject_id || dataAll.subject_id==s.id}" th:value="${s.id}" th:text="${s.name}"
+            th:data-credit="${s.credit}" th:data-creditac="${s.creditAction}"></option>
+</select>
+
+		</div>
+		
+		<input id="Credit_selected_when_error" type="hidden" th:value="${selected_credit}">
+		<input id="start_slot_select_error" type="hidden" th:value="${data.slotStart}">
+		<input id="end_slot_select_error" type="hidden" th:value="${data.slotEnd}">
+		
+		
+
+		<form class="card-body" style=" display:none ;width: 83%" id="form_create_one" th:action="@{/admin/class/create}" method="post"
+			th:object="${data}">
+
+			<input id="semester_value_create" th:field="*{semeter_id}"type="hidden" readonly /> 
+			<input id="subject_value_create" th:field="*{subject_id}"type="hidden" readonly /> 
+				<input th:field="*{subject_id}"
+				id="subject_hidden_creaet" type="hidden" />
+				
+				
+
+
+<div class="mb-3 hiddne_div_create"  >
+<div class="input-group ">
+    <div class="input-group-prepend" style="width: 150px">
+        <span style="width: 100%" class="input-group-text" id="basic-addon1" th:text="#{class.create.enter.quantity}">Enter quantity</span>
+    </div>
+    <input type="text" id="input_capacity_create" th:field="*{quantity}" class="form-control" aria-label="Username"
+           aria-describedby="basic-addon1">
+</div>
+   <p th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="text-danger">Name Error</p>
+
+</div>
+
+
+
+<div class="mb-3 hiddne_div_create">
+<div class="input-group" >
+				<div class="input-group-prepend" style="width: 150px">
+					<label style="width: 100%" class="input-group-text"
+						for="inputGroupSelect01" th:text="#{class.select.type}">Select type</label>
+				</div>
+				<select class="custom-select" th:field="*{type}"
+					id="select_classtype_create">
+					<option class="option_of_select_type"  value=""  th:text="#{class.select.type}">Select type</option>
+					<option class="option_of_select_type"  value="all"  th:text="#{class.all.year}">all year</option>
+					<option class="option_of_select_type hidden_when_more_3"    value="fhalf" th:text="#{class.half.first}">first half year</option>
+					<option class="option_of_select_type  hidden_when_more_3"  value="lhalf" th:text="#{class.half.last}">last half year</option>
+				</select>
+			</div>
+			 <p th:if="${#fields.hasErrors('type')}" th:errors="*{type}" class="text-danger">Name Error</p>
+</div>
+			
+
+<div class="mb-3 hiddne_div_create">
+<div class="input-group" >
+
+				<div class="input-group-prepend" style="width: 150px">
+					<span style="width: 100%" class="input-group-text"
+						id="basic-addon1" th:text="#{class.select.start.day}" >Select start day</span>
+				</div>
+				<input type="date" class="form-control mr-2"
+					th:field="*{date_start}" id="select_startdate_create"
+					placeholder="Username" aria-label="Username"
+					aria-describedby="basic-addon1">
+			</div>
+			<p th:if="${#fields.hasErrors('date_start')}" th:errors="*{date_start}" class="text-danger">Name Error</p>	
+</div>
+			
+
+			<input th:field="*{weekDay}" id="hidden_weekday_create" type="hidden" />
+			
+			<div class="input-group mb-3" style="display: none">
+
+				<div class="input-group-prepend" style="width: 150px">
+					<span style="width: 100%" class="input-group-text"
+						id="basic-addon1" th:text="#{holiday.date.end}" >End day</span>
+				</div>
+				<input type="date" class="form-control mr-2" th:field="*{date_end}"
+					id="select_enddate_create" readonly placeholder="Username"
+					aria-label="Username" aria-describedby="basic-addon1"> 
+				
+			</div>
+
+<div class="mb-3 hiddne_div_create">
+<div class="input-group " >
+				<div class="input-group-prepend" style="width: 150px">
+					<label style="width: 100%" class="input-group-text"
+						for="inputGroupSelect01" th:text="#{class.select.start.slot}" > Select start slot</label>
+				</div>
+				<select class="custom-select " th:data-check="*{slotStart}" th:field="*{slotStart}" id="select_startslot_create" data-id="0">
+				</select>
+			</div>
+					<p th:if="${#fields.hasErrors('slotStart')}" th:errors="*{slotStart}" class="text-danger">Name Error</p>
+</div>
+			
+
+			<div class="input-group mb-3" style="display: none">
+				<div class="input-group-prepend" style="width: 150px">
+					<span style="width: 100%" class="input-group-text"
+						id="basic-addon1" th:text="#{class.end.slot}" >End slot</span>
+				</div>
+				<input  id="select_endslot_createss" th:field="*{slotEnd}"
+					readonly class="form-control"
+					aria-label="Username" aria-describedby="basic-addon1">
+			</div>
+			
+			<div class=" mb-4 hiddne_div_create">
+			<div class="input-group" >
+				<div class="input-group-prepend" style="width: 150px">
+					<label style="width: 100%" class="input-group-text"
+						for="inputGroupSelect01" th:text="#{class.select.room}"> Select room</label>
+				</div>
+				<select class="custom-select " th:field="*{room_id}" id="select_room_create">
+				<option th:each="r : ${lastSelectRoom}" th:text="${r.name}" th:value="${r.id}" th:selected="${data.room_id==r.id}"></option>
+				</select>
+			</div>
+			<p th:if="${#fields.hasErrors('room_id')}" th:errors="*{room_id}" class="text-danger">Name Error</p>
+			</div>
+			
+			
+
+			<div class=" mb-4 hiddne_div_create">
+
+			<div class="input-group" >
+				<div class="input-group-prepend" style="width: 150px">
+					<label style="width: 100%" class="input-group-text"
+						for="inputGroupSelect01" th:text="#{class.select.teacher}" > Select teacher</label>
+				</div>
+				<select class="custom-select " th:field="*{teacher_id}" id="select_teacher_create">
+				<option th:each="t : ${lastSelectTeacher}" th:value="${t.id}" th:text="${t.name}" th:selected="${t.id==data.teacher_id}" ></option>
+			
+				</select>
+			</div>
+			<p th:if="${#fields.hasErrors('teacher_id')}" th:errors="*{teacher_id}" class="text-danger">Name Error</p>
+			</div>
+			
+			
+			<div>
+				<button class="btn btn-primary" type="submit" th:text="#{class.create}" >Create class</button>
+			</div>
+
+		</form>
+		
+		
+		
+		
+			<form style=" display:none ;width: 83%" class="card-body" id="form_create_both" th:action="@{/admin/class/createall}" method="post"
+			th:object="${dataAll}">
+			
+			
+
+			<input id="semester_value_create_both" th:field="*{semeter_id}"
+				type="hidden" readonly /> 
+				<input th:field="*{subject_id}"
+				id="subject_hidden_creaet_both" type="hidden" />
+
+
+<div class="handle_hidden_error mb-3">
+<div class="input-group">
+				<div class="input-group-prepend" style="width: 150px">
+					<span style="width: 100%" class="input-group-text"
+						id="basic-addon1">Enter quantity</span>
+				</div>
+				<input type="text" id="input_capacity_create_both" th:field="*{quantity}"
+					class="form-control" aria-label="Username"
+					aria-describedby="basic-addon1">
+			</div>
+			<p th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="text-danger">Name Error</p>
+</div>
+			
+			
+			
+			
+ <div class="input-group mb-3 handle_hidden_error" style="display:none">
+        <div class="input-group-prepend" style="width: 150px">
+            <label style="width: 100%; height:38px" class="input-group-text" for="inputGroupSelect01" th:text="#{class.select.type}">Select type</label>
+        </div>
+        
+        <div style="width: 42%">
+            <select class="custom-select" th:field="*{theory.type}" id="select_classtype_create_theory">
+                <option value="" th:text="#{class.select.type.theory}">Select Type for theory</option>
+                <option value="all" th:text="#{class.all.year}">All Year</option>
+                <option value="fhalf" th:text="#{class.half.first}">First Half Year</option>
+                <option value="lhalf" th:text="#{class.half.last}">Last Half Year</option>
+            </select>
+             <p th:if="${#fields.hasErrors('theory.type')}" th:errors="*{theory.type}" class="text-danger">Action Type Error</p>
+        </div>
+        
+        <div style="width: 42%">
+            <select class="custom-select" th:field="*{action.type}" id="select_classtype_create_action">
+                <option value="" th:text="#{class.select.type.action}" >Select Type for action</option>
+                <option value="all" th:text="#{class.all.year}">All Year</option>
+                <option value="fhalf" th:text="#{class.half.first}">First Half Year</option>
+                <option value="lhalf" th:text="#{class.half.last}">Last Half Year</option>
+            </select>
+            <p th:if="${#fields.hasErrors('action.type')}" th:errors="*{action.type}" class="text-danger">Action Type Error</p>
+        </div>
+    </div>
+    
+
+			<div class="input-group mb-3 handle_hidden_error" style="display:none">
+
+				<div class="input-group-prepend" style="width: 150px">
+					<span style="width: 100%; height:38px"class="input-group-text"
+						id="basic-addon1" th:text="#{class.select.start.day}">Select start day</span>
+				</div>
+				 <div style="width: 42%">
+				<input type="date" class="form-control mr-2"th:field="*{theory.date_start}" id="select_startdate_create_theory"
+					placeholder="Username" aria-label="Username"
+					aria-describedby="basic-addon1"/>
+					  <p th:if="${#fields.hasErrors('theory.date_start')}" th:errors="*{theory.date_start}" class="text-danger">Action Type Error</p>
+					</div>
+					
+					 <div style="width: 42%">
+					<input type="date"
+					class="form-control" th:field="*{action.date_start}"
+					id="select_startdate_create_action" placeholder="Username"
+					aria-label="Username" aria-describedby="basic-addon1"/>
+					  <p th:if="${#fields.hasErrors('action.date_start')}" th:errors="*{action.date_start}" class="text-danger">Action Type Error</p>
+					</div>
+			</div>
+
+			<input th:field="*{theory.weekDay}" id="hidden_weekday_create_theory" type="hidden" />
+			<input th:field="*{action.weekDay}" id="hidden_weekday_create_action" type="hidden" />
+			
+			
+			
+			<div class="input-group mb-3 handle_hidden_error" style="display: none">
+
+				<div class="input-group-prepend" style="width: 150px">
+					<span style="width: 100%" class="input-group-text"
+						id="basic-addon1" th:text="#{holiday.date.end}">End day</span>
+				</div>
+				<input type="date" class="form-control mr-2" th:field="*{theory.date_end}"
+					id="select_enddate_create_theory" readonly placeholder="Username"
+					aria-label="Username" aria-describedby="basic-addon1">
+				<input
+					type="date" class="form-control" th:field="*{action.date_end}"
+					id="select_enddate_create_action" readonly placeholder="Username"
+					aria-label="Username" aria-describedby="basic-addon1">
+			</div>
+
+
+
+			<div class="input-group mb-3 handle_hidden_error" style="display:none">
+				<div class="input-group-prepend" style="width: 150px">
+					<label style="width: 100%; height:38px" class="input-group-text"
+						for="inputGroupSelect01" th:text="#{class.select.start.slot}" > Select start slot</label>
+				</div>
+				<div style="width: 42%">
+				<select class="custom-select " th:field="*{theory.slotStart}"id="select_startslot_create_theory" data-id="0">
+				</select>
+				  <p th:if="${#fields.hasErrors('theory.slotStart')}" th:errors="*{theory.slotStart}" class="text-danger">Action Type Error</p>
+				</div>
+				
+				<div style="width: 42%">
+				<select class="custom-select " th:field="*{action.slotStart}"id="select_startslot_create_action" data-id="0">
+				</select>
+				  <p th:if="${#fields.hasErrors('action.slotStart')}" th:errors="*{action.slotStart}" class="text-danger">Action Type Error</p>
+				</div>
+			</div>
+			
+			
+			<div class="input-group mb-3" style="display: none" >
+				<div class="input-group-prepend" style="width: 150px">
+					<span style="width: 100%; height:38px" class="input-group-text"
+						id="basic-addon1" th:text="#{class.end.slot}">End slot</span>
+				</div>
+				
+				
+				<input type="text" id="select_endslot_create_theory" th:field="*{theory.slotEnd}"
+					readonly class="form-control"aria-label="Username" aria-describedby="basic-addon1">
+				
+					<input type="text" id="select_endslot_create_action" th:field="*{action.slotEnd}"
+					readonly class="form-control"aria-label="Username" aria-describedby="basic-addon1">
+			</div>
+
+			<div class="input-group mb-3 handle_hidden_error" style="display:none">
+			
+					<div class="input-group-prepend" style="width: 150px">
+					<span style="width: 100%; height:38px" class="input-group-text"
+						id="basic-addon1" th:text="#{class.select.room}">select room</span>
+				</div>
+					<div style="width: 42%">
+				<select class="custom-select " th:field="*{theory.room_id}"
+					id="select_room_create_theory">
+				</select>
+				 <p th:if="${#fields.hasErrors('theory.room_id')}" th:errors="*{theory.room_id}" class="text-danger">Action Type Error</p>
+					</div>
+					<div style="width: 42%">
+				<select class="custom-select " th:field="*{action.room_id}"
+					id="select_room_create_action">
+				</select>
+				 <p th:if="${#fields.hasErrors('action.room_id')}" th:errors="*{action.room_id}" class="text-danger">Action Type Error</p>
+					</div>
+			</div>
+						
+			
+			
+
+			<div class="input-group mb-3 handle_hidden_error" style="display:none">
+				<div class="input-group-prepend" style="width: 150px">
+					<span style="width: 100%; height:38px"class="input-group-text"
+						id="basic-addon1 " th:text="#{class.select.teacher}" >select teacher</span>
+				</div>
+				<div style="width: 42%">
+				<select class="custom-select " th:field="*{theory.teacher_id}"
+					id="select_teacher_create_theory">
+				</select>
+				 <p th:if="${#fields.hasErrors('theory.teacher_id')}" th:errors="*{theory.teacher_id}" class="text-danger">Action Type Error</p>
+				</div>
+				<div style="width: 42%">
+				<select class="custom-select " th:field="*{action.teacher_id}"
+					id="select_teacher_create_action">
+				</select>
+				 <p th:if="${#fields.hasErrors('action.teacher_id')}" th:errors="*{action.teacher_id}" class="text-danger">Action Type Error</p>
+				</div>
+			</div>
+			<div>
+				<button class="btn btn-primary" type="submit" th:text="#{class.create}">Create class</button>
+			</div>
+
+		</form>
+		
+		
+		
+	</div>
+
+</body>
+</html>

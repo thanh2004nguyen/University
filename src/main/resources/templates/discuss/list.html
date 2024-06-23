@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{/layout}">
+<head>
+<title>Content</title>
+</head>
+<body>
+
+	<div layout:fragment="content" class="card ml-4" style="width: 100%">
+
+		<h3 class="card-head text-center">List discuss Room</h3>
+		
+		<div class="card-body">
+		
+	<!-- 	require role tacher -->
+		<a sec:authorize="hasAnyAuthority('TEACHER')" style="font-size:20px;  font-weight:bold" th:href="@{'/web/discuss/create/'+*{id}}">Create new discuss room</a>
+		<div style="height:20px"></div>
+		
+		<div th:each="s : ${data}" th:object="${s}" 
+		style="width: 100%; padding: 0 10px;; border: 1px solid black; border-radius:5px"  class=" shadow-sm  d-flex align-items-center justify-content-md-between" >
+		<div >
+		<div ><b>Name : </b>
+		<span th:text="*{name}"></span>
+		</div>
+		<div  ><b>Topic : </b>
+		<span th:text="*{topic}"></span>
+		</div>
+		<div ><b>Expired : </b>
+		<span th:text="*{expried}"></span>
+		</div>
+		</div>
+		<div>
+			<a th:href="@{'/web/discuss/room/'+*{id}}" class="btn btn-info">join</a>
+		<a sec:authorize="hasAnyAuthority('TEACHER')"  th:href="@{'/web/discuss/edit/'+*{id}}" class="btn btn-warning ml-4">edit</a>
+		</div>
+	
+		</div>
+		
+		
+		</div>
+
+
+	</div>
+</body>
+</html>

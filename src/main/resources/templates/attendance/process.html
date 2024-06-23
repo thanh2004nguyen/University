@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{/layout}">
+<head>
+<title>Content</title>
+</head>
+<body>
+	<div layout:fragment="content" class="ttttable table-bordered mt-3" 
+	style="transform:translateX(45px);">
+		<br/>
+		<div class="card-head mb-2">
+			<h2 class="mb-4 text-center" th:text="#{attend.head.process}">Attendancefor
+				student</h2>
+
+			<div class="d-flex align-items-center justify-content-around" >
+				<div>
+					<div class="mb-3">
+						<span th:text="#{label.class} +' : '">Class : </span><b
+							th:text="${data.className}">T12206M0</b>
+					</div>
+					
+					<div class="mb-3">
+						<span th:text="#{attend.index.attend} +' : '">attend : </span><b
+							th:text="${attend +' / ' + data.lessons.size()}"></b>
+					</div>
+
+
+				</div>
+
+				<div>
+					<div class="mb-3">
+						<span th:text="#{label.subject} +' : '">subject : </span><b
+							th:text="${data.SubjectName}">Database management</b>
+					</div>
+					
+					<div th:if="${normal}" class="mb-3">
+						<span th:text="#{label.status} +' : '">status : </span><b
+							th:text="#{attend.status.normal}">normal</b>
+					</div>
+					
+					<div th:if="${!normal}" class="mb-3">
+						<span th:text="#{label.status} +' : '">status : </span><b
+							th:text="#{attend.status.ban}">ban</b>
+					</div>
+					
+
+
+				</div>
+
+
+
+
+			</div>
+
+
+
+ 			<table class="table table-bordered mt-3" >
+				<thead>
+					<tr>
+						<th scope="col" class="text-center">Lesson</th>
+						<th scope="col" class="text-center" th:text="#{label.day}">Student
+							code</th>
+						<th scope="col" class="text-center" th:text="#{label.status}">Student
+							name</th>
+					</tr>
+				</thead>
+				<tbody th:each="s,i : ${data.lessons}">
+					<tr>
+						<td class="text-center" th:Text="${s.lesson}">lesson</td>
+						<td class="text-center"th:text="${#dates.format(s.day, 'dd-MM-yyyy')}">Otto</td>
+						<td th:if="${s.status==null}" class="text-center" th:text="#{class.status.waiting}">Waiting</td>
+						<td th:if="${s.status!=null && s.status.equals('attend')}" class="text-center attend" th:Text="#{attend.index.attend}">status</td>
+						<td th:if="${s.status!=null && s.status.equals('absent')}" class="text-center absent" th:Text="#{attend.index.absent}">status</td>
+						<td th:if="${s.status!=null && s.status.equals('half')}" class="text-center half" th:Text="#{attend.index.half}">status</td>
+					</tr>
+				</tbody>
+			</table>
+
+
+		</div>
+		</div>
+</body>
+</html>

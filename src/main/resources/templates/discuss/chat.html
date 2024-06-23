@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{/layout}">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>discuss</title>
+    <style type="text/css">
+    .mess_recieve_discuss{
+        min-width:30%;
+        max-width:60%;
+        width:fit-content;
+        border-radius: 10px;
+        padding :5px 12px;
+        margin-bottom:15px;
+        background-color:#f0f0f0;
+    }
+    
+    .sent_mess_discuss{
+        min-width:30%;
+        max-width:60%;
+        width:fit-content;
+        border-radius: 10px;
+        background-color:#0000cd;
+        display:flex;
+        flex-direction:column;
+        align-items:end;
+        padding :5px 12px;
+    }
+    
+    .action_btn_discuss{
+        border-radius:8px 8px 0 0;
+   /* Hidden by default */
+    }
+    
+    .action_btn_discuss:hover{
+        background-color: gray;
+        cursor:pointer;
+    }
+       
+    .btn_under{
+        border-radius: 0 0 8px 8px;
+    }
+    
+    .parent-hover:hover .fa-ellipsis-v {
+    display: block !important;
+}
+
+
+
+
+    </style>
+   
+</head>
+<body>
+<div layout:fragment="content" class="card ml-5" id="chat_access_form" style="width: 100%">
+
+<div class="messaging " style="height:calc(100vh - 100px)">
+  <div class="inbox_msg h-100 ">
+
+    <div class="mesgs h-100" style="padding :0">
+     <p th:Text="${topic}" class="h3 text-center bg bg-warning w-100" >topic</p>
+     <div class="msg_history " id="messageArea" style="height:calc(100% - 85px)">
+     
+        <div th:each="message : ${messages}" th:object="${message}">
+            <div th:class="${message.sender_id == student} ? 'outgoing_msg' : 'incoming_msg'">
+            
+            <div th:if="${message.sender_id == student}"  class="d-flex justify-content-end parent-hover">
+                   
+                    
+                    <div  th:class="'cover_hdden_'+*{id}" th:classappend="handle_hide" style="border: solid black 1px; border-radius:8px; margin:10px 20px 0 0 ;display:none ">
+                        <div  class="p-2 action_btn_discuss" onClick="hanldeDelete(this)" th:data_use=*{id}>delete</div>
+                      
+                    </div>
+                    
+                     <i class="fas fa-ellipsis-v" th:id="'icon_option_mess_'+*{id}" th:data_use=*{id} onClick="handleClickDetail(this,event)" 
+                     style="font-size:25px; color:gray; cursor:pointer; margin-right:10px; margin-top:10px; display:none"></i>
+                     
+                    <div class=" sent_mess_discuss " th:id="'handle_mess_'+*{id}"  >
+                        <p th:text="*{text}" style="float:right; margin-bottom:0; color:white; font-size:14px;"></p>
+                        <p class="time_date"  th:text="*{#dates.format(createAt, 'dd-MM-yyyy HH:mm')}">11:01 AM | Today</p>
+                    </div>
+                </div>
+                
+                <div  th:unless="${message.sender_id == student}" class="incoming_msg" >
+                    <div class="received_msg pl-3">
+                        <div class=" mess_recieve_discuss" th:id="'handle_mess_'+*{id}" >
+                            <span style="font-size:14px; color:#0000cd; font-weight:bold" class="time_date mb-1"  th:text="*{sender_name}">ho van y</span>
+                            <p class="mb-1" style="color:black; font-size:16px" th:text="*{text}">We work .</p>
+                            <span class="time_date mt-0" th:text="*{#dates.format(createAt, 'dd-MM-yyyy HH:mm')}">11:01 AM | Today</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form id="messageForm" name="messageForm">
+        <div class="form-group">
+            <div class="input-group clearfix">
+                <input type="text" id="message" placeholder="Type a message..." autocomplete="off" class="form-control"/>
+                <button type="submit" class="primary">Send</button>
+            </div>
+        </div>
+    </form>
+      
+    </div>
+  </div>
+</div>
+
+<input id="id_room_discuss" type="hidden" th:data-id="${student}" th:value="${room}" readonly>
+
+
+</div>
+
+
+</body>
+</html>

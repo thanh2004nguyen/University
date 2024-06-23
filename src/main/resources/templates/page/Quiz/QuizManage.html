@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+layout:decorate="~{/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Manage</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+
+        
+            .merged-cell {
+        background-color: lightblue; /* Set your desired background color */
+    }
+    </style>
+</head>
+<body layout:fragment="content">
+<h2>Quiz Manage</h2>
+
+<table class="table table-bordered schedule-table " style="height: 30vh">
+
+    <thead>
+    <tr>
+
+        <th >ClassName</th>
+        <th >Subject</th>
+        <th >Duration</th>
+        <th >Total Point</th>
+        <th >Status</th>
+         <th >Action</th>
+    </tr>
+    </thead>
+<tbody>
+    <tr th:each="item : ${data}">
+
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.Subject.name}"></td>
+        <td th:text="${item.duration}"></td>
+        <td th:text="${item.totalMark}"></td>
+        <td th:text="${item.status}"></td>
+                    <td>
+      
+        
+       <a class="btn btn-warning" th:href="@{/web/quiz/update/{id}(id=${item.id})}"  title="Update"
+        > <i class="fas fa-edit"></i></a>
+        
+               <a class="btn btn-warning" th:href="@{/web/quiz/delete/{id}(id=${item.id})}"  title="Delete"
+        > <i class="fas fa-trash"></i></a>
+
+            </td>
+    </tr>
+</tbody>
+</table>
+
+<div class="card-footer">
+    <a th:data-s="${data.number + 1}" id="back_page_btn" th:classappend="${data.first ? 'disabled' : ''}" class="btn" 
+        style="border: solid 1px black; padding: 3px 10px; margin-right:10px;">Previous</a>
+    
+    <a th:each="pageNo : ${#numbers.sequence(0, data.totalPages-1)}"
+        th:classappend="${pageNo == data.number ? 'text-primary' : ''}"
+        class="btn change_page_href" style="border: solid 1px black; padding: 3px 10px; margin:0px 5px;"
+        th:text="${pageNo + 1}"></a>
+    
+    <a th:data-s="${data.number + 1}" th:data-total-pages="${data.totalPages}" id="next_page_btn" 
+        th:classappend="${data.last ? 'disabled' : ''}" class="btn" 
+        style="border: solid 1px black; padding: 3px 10px; margin-left:10px;">Next</a>
+</div>
+
+        
+        
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const pageLinks = document.querySelectorAll(".change_page_href");
+    const prevBtn = document.getElementById("back_page_btn");
+    const nextBtn = document.getElementById("next_page_btn");
+    
+    function handlePagination(pageNumber) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('page');
+        let href = "/web/quiz/QuizManage";
+
+        if (myParam) {
+            href += `?page=${pageNumber}`;
+        } else {
+            href += `?page=${pageNumber}`;
+        }
+
+        window.location.href = href;
+    }
+
+    // Event listener for page links
+    pageLinks.forEach(link => {
+        link.addEventListener("click", function(event) {
+            event.preventDefault();
+            const pageNumber = this.textContent;
+            handlePagination(pageNumber);
+        });
+    });
+
+    // Event listener for previous button
+    prevBtn.addEventListener("click", function(event) {
+        event.preventDefault();
+        let currentPage = parseInt($("#next_page_btn").attr("data-s"));
+        if (currentPage > 1) {
+            const pageNumber = currentPage - 1;
+            handlePagination(pageNumber);
+        }
+    });
+
+    // Event listener for next button
+    nextBtn.addEventListener("click", function(event) {
+        event.preventDefault();
+        let currentPage = parseInt($("#next_page_btn").attr("data-s"));
+        const totalPages = parseInt($("#next_page_btn").attr("data-total-pages"));
+        if (currentPage < totalPages) {
+            const pageNumber = currentPage + 1;
+            handlePagination(pageNumber);
+        }
+    });
+});
+</script>           
+</body>
+</html>

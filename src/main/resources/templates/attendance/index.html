@@ -1,0 +1,115 @@
+a<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{/layout}">
+<head>
+<title>Content</title>
+</head>
+<body>
+
+	<div layout:fragment="content" class="ttttable table-bordered mt-3" style="transform:translateX(50px)">
+	<br/>
+		<div class="card-head mb-2">
+			<h2 class="mb-4 text-center" th:text="#{attend.index.head}">Attendancefor
+				student</h2>
+
+			<div class="d-flex align-items-center justify-content-around">
+				<div>
+					<div class="mb-3">
+						<span th:text="#{label.class} +' : '">Class : </span><b
+							th:text="${lesson.classSubject.name}">T12206M0</b>
+					</div>
+					<div>
+						<span th:text="#{label.week} +' : '">week : </span><b
+							th:text="${lesson.lesson}">T12206M0</b>
+					</div>
+
+				</div>
+
+				<div>
+					<div class="mb-3">
+						<span th:text="#{label.subject} +' : '">subject : </span><b
+							th:text="${lesson.classSubject.subject.name}">Database
+							management</b>
+					</div>
+					<div>
+						<span th:text="#{label.day} +' : '">day : </span><b
+							th:text="${#dates.format(lesson.day, 'dd-MM-yyyy')}">Database
+							management</b>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="mt-3 d-flex align-itemscenter justify-content-around">
+				<div class=" d-flex align-itemscenter">
+					<form action="" method="get" class="d-flex align-itemscenter ml-4">
+						<input class="mr-2" name="code"
+							th:placeholder="#{attend.index.holder}" />
+						<button style="padding: 2px 20px; font-size: 14px"
+							class="mr-1 btn btn-primary" type="submit"
+							th:text="#{label.search}">search</button>
+					</form>
+
+					<form th:action="@{'/web/attendance/index/' +${id}}" method="get"
+						class="d-flex align-itemscenter ml-4">
+
+						<button style="padding: 2px 20px; font-size: 14px; margin-left:-15px;"
+							class="mr-1 btn btn-primary" type="submit"
+							th:text="#{label.reset}">reset</button>
+					</form>
+				</div>
+				<button id="check_all_attend_class" th:text="#{attend.index.setall}">
+					set all attend</button>
+			</div>
+
+
+		</div>
+
+
+
+		<table class="table table-bordered mt-3">
+			<thead>
+				<tr>
+					<th scope="col" class="text-center">#</th>
+					<th scope="col" class="text-center" th:text="#{label.code}">Student
+						code</th>
+					<th scope="col" class="text-center" th:text="#{label.name} +' : '">Student
+						name</th>
+					<th scope="col" class="text-center"
+						th:text="#{attend.index.attend}">Attend</th>
+					<th scope="col" class="text-center"
+						th:text="#{attend.index.absent}">Absent</th>
+					<th scope="col" class="text-center" th:text="#{attend.index.half}"style="display:none">Half</th>
+				</tr>
+			</thead>
+			<tbody th:each="s,i : ${data}" th:data_id="${lesson.id}">
+				<tr th:data_id="${s.student_id}">
+					<th class="text-center" th:text="${i.index+1}" scope="row">1</th>
+					<td class="text-center" th:Text="${s.student_code}">Mark</td>
+					<td class="text-center" th:Text="${s.student_name}">Otto</td>
+
+					<td class="text-center"><input style="accent-color: green;"
+						th:checked="${s.status == 'attend'}" class="to_check_attend_all"
+						onchange="submitFormAttendance(this)"
+						th:name="${'status_attendance_select'+i.index}" value="attend"
+						type="radio" /></td>
+					<td class="text-center"><input style="accent-color: red;"
+						th:checked="${s.status == 'absent'}"
+						onchange="submitFormAttendance(this)"
+						th:name="${'status_attendance_select'+i.index}" value="absent"
+						type="radio" /></td>
+					<td class="text-center" style="display:none"><input style="accent-color: yellow;"
+						th:checked="${s.status == 'half'}"
+						onchange="submitFormAttendance(this)"
+						th:name="${'status_attendance_select'+i.index}" value="half"
+						type="radio" /></td>
+				</tr>
+
+			</tbody>
+		</table>
+
+
+	</div>
+</body>
+</html>

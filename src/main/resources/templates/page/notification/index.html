@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{adminLayout/adminLayout}">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div layout:fragment="content" class="card text-center ml-3">
+       
+       <div style="width:100%" class="card-header">
+        <h3 style="font-weight:bold; font-size:40px" th:text="#{notify.head}" >List Notify</h3>
+        <div class="d-flex align-items-center justify-content-between" style="padding: 0 10px">
+       <form style="width:100%" class="d-flex align-items-center justify-content-between" method="get" th:action="@{/admin/notify/list}" id="form_change_semester_notification">
+       <div>
+       <span th:text="#{label.year} +' : '">Year :</span>
+       <select name="semester" id="select_semeser_notification">
+       <option th:each="se :${semesters}" 
+       th:selected="${currentSemester == se.id}"
+       th:value="${se.id}"
+        th:text="#{label.semester} + ${se.name} + ' ' + ${se.year} + '-' + (${se.year} + 1)"></option>
+       </select>
+       </div>
+    
+       
+       <input th:if="${error=='ERROR'}" class="show_error_toast" readonly type="hidden"  th:value="#{toast.success.error}"> 
+      <input th:if="${error=='CREATED'}" class="show_success_toast" readonly type="hidden"  th:value="#{toast.success.create}"> 
+   
+      </form>
+      
+      </div>
+      
+       </div>  
+       
+        <table class="table  border card-body" id="class_for_subject_table">
+            <thead class="bg bg-primary">
+                <tr>
+                    <th>#</th>
+                    <th  class="text-center" th:text="#{notify.title}" >Title</th>
+                    <th  class="text-center" th:text="#{notify.content}"  >Content</th>
+                    <th class="text-center" th:text="#{notify.created}" >Created_at</th>
+                    <th class="text-center" th:text="#{notify.creator}">Creator</th>
+           
+                    <th class="text-center" th:text="#{notify.focus}">focus</th>
+                      <th class="text-center" th:text="#{label.type}">Type</th>
+         
+
+                </tr>
+            </thead>
+            <tbody th:each="s, iterStat : ${data.content}" th:object="${s}">
+                <tr th:classappend="${s.id%2==0 ? 'table-active' : ''}">
+                    <td class="text-center" th:text="${iterStat.index + 1}"></td>
+                     <td class="text-center" th:text="*{title}" ></td>
+                    <td class="text-center" th:text="*{content}" ></td>
+                    <td class="text-center"  th:text="*{#dates.format(created_at, 'dd-MM-yyyy hh:mm')}" ></td>
+                     <td class="text-center" th:text="*{creator.name}" ></td>
+                
+              
+                     <td th:if="*{field!=null}" class="text-center" th:text="*{field.name}" > </td>
+                     <td th:if="*{classSbject!=null}" class="text-center" th:text="*{classSbject.name}" > </td>
+                     <td th:if="*{classSbject==null && field==null}" class="text-center" th:text="All" > </td>
+                     <td class="text-center " >
+                     <div class="d-flex flex-column">
+                      <span th:if="*{sentEmail}" class="bg bg-primary p-1 h6"> Sent to Email</span>
+                      <span th:if="*{sentMobile}" class="bg bg-primary p-1 h6"> Sent to Mobile</span></div>
+                    
+                     </td>
+                  
+                </tr>
+            </tbody>
+        </table>
+       
+        
+        <div class="card-footer" >
+        <a th:data-s="${data.number+1}" id="back_page_btn_notification"  th:classappend="${data.first} ? 'disabled' : ''"  class="btn " 
+        style="border:solid 1px black; padding: 3px 10px ; margin-right:10px" th:text="#{label.back}"
+        > Previous</a>
+        
+     <a th:each="pageNo : ${#numbers.sequence(0, data.totalPages-1)}"
+   th:classappend="${pageNo == data.number ? 'text-primary' : ''}"
+   class="btn change_page_href_notification"  style="border:solid 1px black; padding: 3px 10px ; margin:0px 5px"
+   th:text="${pageNo + 1}"
+>
+</a>
+        
+        <a th:data-s="${data.number+1}" id="next_page_btn_notification"  th:classappend="${data.last} ? 'disabled' : ''"  class="btn "  
+        style="border:solid 1px black; padding: 3px 10px ;margin-left:10px"  th:text="#{label.next}" > Next</a>
+        </div>
+        
+        
+    </div>
+</body>
+</html>

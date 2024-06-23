@@ -1,0 +1,44 @@
+ <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{layout}">
+<head>
+<title>Create</title>
+ <meta charset="utf-8">
+</head>
+<body>  
+
+  
+    <header id="header" class=" d-flex flex-column" style="margin-bottom:10px ;height:140px; margin-left:0;">
+             
+<div class="containner d-flex align-items-center justify-content-between w-100" >
+
+<div id="toggle_position_header" class="pl-4"></div>
+ <img id="logo_img_size" alt="error" style="width:350px" th:src="@{/getimage/logo.png}" >
+<div class="dropdown">
+
+  <button class="btn btn-secondary dropdown-toggle mr-4 btn_change_language" type="button" id="dropdownMenuButton " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+  th:text="#{label.current.language}">
+
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+     
+  <a class="dropdown-item" href="?lang=vi" th:text="#{label.lang.vi}">eng</a>
+  <a class="dropdown-item" href="?lang=en" th:text="#{label.lang.en}"> vi</a>
+  </div>
+</div>
+</div>
+
+<div class="w-100  bg bg-primary d-flex align-items-center justify-content-around" style="height:40px ; font-size:20px; color:white; font-weight:bold">
+
+<a href="/"><i style="color:white; font-size:25px" class="fas fa-home" ></i></a>
+<a> Tuition and support</a>
+<a>Academic</a>
+<a style="color:white"  th:href="@{/admin/testAdmin}">Administration</a>
+
+</div>
+
+	</header> 
+</body>
+</html>

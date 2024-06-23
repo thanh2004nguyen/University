@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<article layout:fragment="content">
+		<h1>Payments Offline</h1>
+
+		<div class="row height d-flex justify-content-center align-items-center">
+
+			<div class="col-md-6" style="margin: 40px 0 -20px 0;">
+				<form action="/admin/paymentoffline" method="get" class="form">
+					<i class="fa fa-user"></i> 
+					<input type="text"class="form-control form-input" name="codee" th:placeholder="#{label.user.search}">
+					<button type="submit" class="left-pan fa fa-search"></button>
+				</form>
+			</div>
+		</div>
+		<br> <br> 
+		<div th:if="${noResults}">
+    <p class="text-center" style="color: red;">No matching code found.</p>
+</div>
+		<br> <br>
+		
+		
+<form  th:action="@{/admin/payment/updateStatus}" th:object="${dto}" method="post" >
+		<input th:field="*{userId}" hidden /> 
+		<table class="table  border card-body" id="class_for_subject_table" >
+			<thead >
+				<tr style="color: black">
+					<th>Stt</th>
+					<th class="text-center">Code</th>
+					<th class="text-center" hidden>Id</th>
+					<th class="text-center" >Student Name</th>
+					<th class="text-center">Subject Name</th>
+					<th class="text-center">Credit</th>
+					<th class="text-center">Cash</th>
+					<th class="title-margin">Select</th>
+
+				</tr>
+			</thead>
+			<tbody>
+
+				<tr th:each="classs,rowStat : ${offline}">
+					<td class="text-center" th:text="${rowStat.index + 1}"></td>
+
+					<td class="text-center" th:text="${classs.student.code}"></td>
+					
+					<td class="text-center" hidden th:text="${classs.student.id}"></td>
+					<td class="text-center" th:text="${classs.student.name}"></td>
+					<td class="text-center"
+						th:text="${classs.ClassforSubject.Subject.name}"></td>
+					<td class="text-center"
+						th:text="${classs.ClassforSubject.Subject.credit}"></td>
+					<td class="text-center"
+						th:text="${classs.ClassforSubject.Subject.credit}*3000000+ vnd"></td>
+					<td class="text-center"> 
+					
+						 <div class="form-check">
+							<input class="form-check-input" th:field="*{subjectId}" type="checkbox"
+								th:id="'flexCheckChecked_' + ${rowStat.index}"
+								th:value="${classs.ClassforSubject.id}"
+								data-credit="${classs.ClassforSubject.Subject.credit}">
+
+							<label class="form-check-label"
+								th:for="'flexCheckChecked_' + ${rowStat.index}"></label>
+						</div> 
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+
+		
+			<div class="form-group">
+				<label for="amount" class="total" style="margin-left: 63.6%">Total</label> 
+				<input type="number" 
+					readonly class="form-control" name="amount" required
+					style="width: 27% ; text-align: center; " >
+					<span  style="margin-right: 160px"> vnd</span>
+			</div>
+			
+			<!-- Hidden input fields for selected item IDs -->
+			<input type="hidden" id="selectedItems" name="selectedItems">
+			<button type="submit" id="paymentButton" class="btn btn-primary">Payment</button>
+		</form>
+
+
+
+		<script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script th:inline="javascript">
+document.addEventListener("DOMContentLoaded", function() {
+    var checkboxes = document.querySelectorAll('.form-check-input');
+    var totalInput = document.querySelector('input[name="amount"]');
+    var totalCredits = 0;
+    var creditStates = {}; // Object to store the state of each credit
+
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var row = this.closest('tr');
+            var creditText = row.querySelector('td:nth-child(6)').textContent.trim();
+            var credit = parseInt(creditText);
+
+            if (!isNaN(credit)) {
+                // Update the state of the credit
+                creditStates[credit] = this.checked;
+
+                // Update the total based on credit state
+                if (this.checked) {
+                    totalCredits += credit;
+                } else {
+                    totalCredits -= credit;
+                }
+                totalInput.value = totalCredits * 3000000;
+            } else {
+                console.error("Invalid credit value:", creditText);
+            }
+        });
+    });
+
+    // Restore credit states from sessionStorage if available
+    var storedStates = sessionStorage.getItem('creditStates');
+    if (storedStates) {
+        creditStates = JSON.parse(storedStates);
+        // Update total based on stored credit states
+        checkboxes.forEach(function(checkbox) {
+            var row = checkbox.closest('tr');
+            var creditText = row.querySelector('td:nth-child(6)').textContent.trim();
+            var credit = parseInt(creditText);
+            if (creditStates[credit]) {
+                checkbox.checked = true;
+                totalCredits += credit;
+            }
+        });
+        totalInput.value = totalCredits * 3000000;
+    }
+
+    // Save credit states to sessionStorage when leaving the page
+    window.addEventListener('beforeunload', function() {
+        sessionStorage.setItem('creditStates', JSON.stringify(creditStates));
+    });
+});
+
+// Handle form submission with confirmation dialog
+document.addEventListener("DOMContentLoaded", function() {
+    $('#orderForm').submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Show confirmation dialog
+        if (confirm("Bạn có muốn thanh toán không?")) {
+            // Proceed with the form submission and update the status
+            var selectedItems = [];
+            $('.form-check-input:checked').each(function() {
+                selectedItems.push($(this).val());
+            });
+            $('#selectedItems').val(selectedItems.join(','));
+
+            // AJAX request to update the status
+            
+        }
+    });
+});
+</script>
+
+	</article>
+</body>
+</html>

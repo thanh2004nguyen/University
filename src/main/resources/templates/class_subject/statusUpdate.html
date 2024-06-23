@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{adminLayout/adminLayout}">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div layout:fragment="content" class="card text-center ml-3" >
+       
+       <div style="width:100%" class="card-header">
+        <h3 style="font-weight:bold; font-size:40px" >Update class status</h3>
+        <div class="d-flex align-items-center justify-content-between" style="padding: 0 10px">
+       <form style="width:100%" class="d-flex align-items-center justify-content-between" method="get" th:action="@{/admin/class/update/status}" id="form_change_semester">
+       <div>
+       <span th:text="#{label.semester} + ' : '">Semester :</span>
+       <select name="semester" id="select_semeser">
+       <option 
+       th:each="s :${semesters}"
+       th:value="${s.id}"
+       th:selected="${s.id==currentSemester}"
+       th:text="#{label.semester} + ${s.name} + ' ' + ${s.year} + '-' + (${s.year} + 1)">
+       </option>
+       </select>
+       </div>
+       
+           <div>
+       <span th:text="#{label.status} + ' : '">Status :</span>
+        <select name="status" id="select_subject_form">
+        
+       <option 
+  
+       th:selected="${currentStatus == sb}"
+       th:each="sb :${status}" 
+       th:value="${sb}"
+       th:text="${sb}"></option>
+       </select>
+       </div>
+       
+      
+       
+       <div>
+       <span th:text="#{label.subject} + ' : '">Subject :</span>
+        <select name="subject" id="select_subject_form">
+        <option th:selected="${currentSubject==0}" value="0" th:text="#{class.list.all}">All subject</option>
+       <option th:selected="${currentSubject== sb.id}" 
+       th:each="sb :${subjects}" 
+       th:value="${sb.id}"
+       th:text="${sb.name}"></option>
+       </select>
+       </div>
+       <button type="button" id="btn_show_form_update" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+ Update Status
+</button>
+      </form>
+      </div>
+      
+       </div> 
+       
+              <!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+   <form method="post" th:action="@{/admin/class/update/status}">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update status</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+     
+     <div id="div_holver_list_class"></div>
+      
+      <div class="input-group" >
+				<div class="input-group-prepend" style="width: 150px">
+					<label style="width: 100%" class="input-group-text"
+						for="inputGroupSelect01" th:text="#{class.select.type}">Select type</label>
+				</div>
+				<select name="type_update" class="custom-select" id="select_classtype_create">
+					 <option 
+       th:each="sb :${status}" 
+       th:value="${sb}"
+       th:text="${sb}"></option>
+					
+				</select>
+			</div>
+      
+     
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </div>
+    </div>
+     </form>
+  </div>
+</div>
+       <input th:if="${error=='ERROR_NULL'}" class="show_error_toast" readonly type="hidden"  th:value="#{notify.error.title.null}">
+       <input th:if="${error=='UPDATED'}" class="show_success_toast" readonly type="hidden"  th:value="#{toast.success.update}">
+       <input th:if="${error=='ERROR_TYPE_LEARNING'}" class="show_error_toast" readonly type="hidden"  th:value="#{toast.error.type.learning}">
+        <input th:if="${error=='ERROR_TYPE_REGISTERED'}" class="show_error_toast" readonly type="hidden"  th:value="#{toast.error.type.registed}">
+       
+        
+       
+       
+        <table class="table  border card-body" id="class_for_subject_table">
+            <thead class="bg bg-primary">
+                <tr>
+                    <th>#</th>
+                    <th  class="text-center" th:text="#{label.name}" >Name</th>
+                    <th class="text-center" th:text="#{class.quantity}">Quantity</th>
+                 
+                    <th class="text-center" th:text="#{holiday.date.start}">Date start</th>
+                    <th class="text-center" th:text="#{holiday.date.end}">Date end</th>
+                    <th class="text-center" th:text="#{label.teacher}">Teacher</th>
+                    <th class="text-center" th:text="#{label.room}">Room</th>
+                    <th class="text-center" th:text="#{label.status}">Status</th>
+                    <th class="text-center" >Select</th>
+                </tr>
+            </thead>
+            <tbody th:each="s, iterStat : ${data}" th:object="${s}">
+                <tr th:classappend="${s.id%2==0 ? 'table-active' : ''}">
+                    <td class="text-center" th:text="${iterStat.index + 1}"></td>
+                    <td class="text-center" th:text="*{name}"></td>
+                    <td class="text-center" th:text="*{quantity}"></td>
+                  
+                    <td class="text-center" th:text="*{#dates.format(dateStart, 'dd-MM-yyyy')}"></td>
+                    <td class="text-center" th:text="*{#dates.format(dateEnd, 'dd-MM-yyyy')}"></td>
+                    <td class="text-center" th:text="*{teacher.name}"></td>
+                    <td class="text-center" th:text="*{room.name}"></td>
+                    <td class="text-center" th:text="*{status}"></td>
+                    <td class="text-center" >
+                <input class="select_class_update" th:value="*{id}" type="checkbox">
+                    </td>
+                  
+                </tr>
+            </tbody>
+        </table>
+       
+        
+ 
+        
+        
+    </div>
+</body>
+</html>

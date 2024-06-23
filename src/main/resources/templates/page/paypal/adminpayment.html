@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{adminLayout/adminLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Payments</title>
+</head>
+<body>
+<article layout:fragment="content">
+    <h1>Payments</h1>
+
+    <div class="row height d-flex justify-content-center align-items-center">
+        <div class="col-md-6" style="margin: 40px 0 -20px 0;">
+            <form action="/admin/user/search" method="get" class="form">
+                <i class="fa fa-user"></i>
+                <input type="text" class="form-control form-input" name="name" th:placeholder="#{label.user.search}">
+                <button type="submit" class="left-pan fa fa-search"></button>
+            </form>
+        </div>
+    </div>
+    <br><br>
+
+    <table class="table border card-body" id="class_for_subject_table">
+        <thead class="bg bg-primary">
+            <tr style="color: black">
+                <th>Stt</th>
+                <th class="text-center">User</th>
+                <th class="text-center" th:text="#{label.user.name}"></th>
+                <th class="text-center">Cash</th>
+                <th class="text-center">Payment Method</th>
+                <th class="text-center">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="classs, iterStat : ${paymentPage.content}">
+                <td class="text-center" th:text="${iterStat.index + 1 + (currentPage * 10)}"></td>
+                <td class="text-center" th:text="${classs.student.name}"></td>
+                <td class="text-center" th:text="${classs.classforSubject.name}"></td>
+                <td class="text-center" th:text="${classs.cash} + ' vnd'"></td>
+                <td class="text-center" th:text="${classs.payments}"></td>
+                <td class="text-center" th:text="${#dates.format(classs.date, 'yyyy-MM-dd')}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="card-footer">
+        <div class="pagination">
+            <ul class="pagination">
+                <li th:if="${paymentPage.hasPrevious()}">
+                    <a th:href="@{/admin/adminpayment(page=${currentPage - 1})}" style="border: solid 1px black; padding: 3px 10px; margin-right: 10px">Previous</a>
+                </li>
+                <li th:each="pageNum : ${#numbers.sequence(0, paymentPage.totalPages - 1)}" th:classappend="${pageNum == currentPage} ? 'active'">
+                    <a th:href="@{/admin/adminpayment(page=${pageNum})}" style="border: solid 1px black; padding: 3px 10px; margin-left: 10px" th:text="${pageNum + 1}"></a>
+                </li>
+                <li th:if="${paymentPage.hasNext()}">
+                    <a th:href="@{/admin/adminpayment(page=${currentPage + 1})}" style="border: solid 1px black; padding: 3px 10px; margin-left: 10px">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</article>
+</body>
+</html>

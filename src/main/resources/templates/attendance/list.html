@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{/layout}">
+<head>
+<title>Content</title>
+ <meta charset="utf-8">
+</head>
+<body>
+
+	<div layout:fragment="content" class="card ml-4" style="width: 100%">
+
+		<h3 class="card-head text-center" th:text="#{attend.list.head}">list class for attendance</h3>
+		
+		 <form method="get" id="form_search_attendance" th:action="@{/web/attendance/list}">
+       <span th:text="#{attend.list.show} +' :'" >Show by :</span>
+        <select name="show" id="select_attendace_show_form">
+    	<option th:selected="${show.equals('today')}" th:text="#{label.today}"  value="today">To day</option> 	
+      <option th:selected="${show.equals('all')}" th:text="#{attend.list.all}"   value="all">All</option>
+       </select>
+       </form>
+		
+			<div class="card-body">
+			
+		<input type="hidden" th:if=${error!=null} id="hidden_error_attend" th:value="#{attend.index.error}">
+		  <!-- Toast container -->
+            <div id="toastContainer" style="position: absolute; top: 0; right: 0; z-index: 1050;"></div>
+
+            <!-- Toast template -->
+            <div class="toast" id="toastTemplate" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000" style="margin-top:50px; min-width:150px;">
+                <div class="toast-header">
+                    <strong class="mr-auto toast-title">Notification</strong>
+                    <small class="text-muted toast-time">just now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    Mark updated successfully.
+                </div>
+            </div>
+		
+		<div th:each="s : ${data}" th:object="${s}" 
+		style="width: 100%; padding: 0 10px;; border: 1px solid black; border-radius:5px"  
+		class=" shadow-sm  d-flex align-items-center justify-content-md-between mb-3" >
+		<div >
+		<div ><b th:text="#{label.class} +' :'" >Class : </b>
+		<span th:text="*{name}"></span>
+		</div>
+		<div  ><b th:text="#{label.subject} +' :'">subject : </b>
+		<span th:text="*{subject.name}" ></span>
+		</div>
+		<div ><b th:text="#{label.room } +' :'"  >Room : </b>
+		<span th:text="*{room.name}" ></span>
+		</div>
+		</div>
+		<div>
+			<a sec:authorize="hasAnyAuthority('TEACHER')" th:href="@{'/web/attendance/index/'+*{id}}" th:text="#{attend.list.attend}" class="btn btn-info">Attendance</a>
+		<a sec:authorize="hasAnyAuthority('STUDENT')"  th:href="@{'/web/attendance/process/'+*{id}}"  class="btn btn-warning ml-4">view process</a>
+		</div> 
+		
+		</div>
+		
+		
+		</div>
+
+
+	</div>
+</body>
+</html>

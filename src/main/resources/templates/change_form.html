@@ -1,0 +1,24 @@
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+layout:decorate="~{/nonelayout}">
+
+   <div class="main" layout:fragment="content">
+
+			         
+			<form th:action="@{/change-form}" method="post" style="width: 500px; margin: 0 auto;">
+				<div class="border border-secondary rounded p-3">
+				    <div>
+				       <h1>Change Password</h1>
+				    </div>
+				    <div>
+				        <p>
+				            <input type="text" name="newpassword" class="form-control" placeholder="Enter new password" required />
+				        </p>         
+				        <p class="text-center">
+				            <button>Submit</button>
+				        </p>
+				    </div>
+				</div>
+			</form>
+	</div>
+</html>

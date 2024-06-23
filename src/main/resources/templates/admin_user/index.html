@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<meta charset="UTF-8">
+</head>
+<script type="text/javascript">
+	
+</script>
+<body>
+	<div layout:fragment="content" class="card text-center ml-3">
+		<div
+			style="width: 100%; color: rebeccapurple; font-family: 'georgia'; padding: 40px 0px 10px 0px; font-weight: 300;"
+			class="card-header">
+
+			<h3
+				style="font-weight: bold; font-size: 40px; text-transform: uppercase;"
+				th:text="#{user.list.title}+ ' '+${type}"></h3>
+				
+				  <!-- Toast container -->
+            <div id="toastContainer" style="position: absolute; top: 0; right: 0; z-index: 1050;"></div>
+
+            <!-- Toast template -->
+            <div class="toast" id="toastTemplate" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000" style="margin-top:50px; min-width:150px;">
+                <div class="toast-header">
+                    <strong class="mr-auto toast-title">Notification</strong>
+                    <small class="text-muted toast-time">just now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    Mark updated successfully.
+                </div>
+            </div>
+			<input th:if="${error=='UPDATED'}" class="show_success_toast"
+				readonly type="hidden" th:value="#{toast.success.update}"> <input
+				th:if="${error=='CREATED'}" class="show_success_toast" readonly
+				type="hidden" th:value="#{toast.success.create}">
+
+			<div
+				class="row height d-flex justify-content-center align-items-center">
+
+				<div class="col-md-6" style="margin: 40px 0 -20px 0;">
+					<form action="/admin/user/search" method="get" class="form">
+						<i class="fa fa-user"></i> <input type="text"
+							class="form-control form-input" name="name"
+							th:placeholder="#{label.user.search}">
+						<button type="submit" class="left-pan fa fa-search"></button>
+					</form>
+				</div>
+			</div>
+			<div class="d-flex align-items-center justify-content-between"
+				style="padding: 30px 10px 0">
+
+				<div style="width: 35%; display: flex">
+					<form style="width: 40%; height: 100%">
+						<select id="classDropdown" style="height: 30px;">
+							<option th:text="#{user.list.chooce.class}"></option>
+						</select>
+					</form>
+
+					<form id="exportForm" action="/admin/user/export" method="GET"
+						style="width: 60%; height: 30px;">
+						<select id="subjectDropdown" style="display: none;">
+							<option th:text="#{user.list.chooce.subject}">Chọn Môn
+								học</option>
+						</select> <input type="submit" id="submitExport" value="Export">
+					</form>
+				</div>
+				<form style="width: 25%"
+					class="d-flex align-items-center justify-content-between"
+					method="get" th:action="@{/admin/user/list}"
+					id="form_change_semester">
+
+					<select id="select_user_type" name="type" onchange="filterUsers()"
+						style="min-width: 250px; margin-right: -200px; max-width: 200px; height: 30px;">
+
+						<option value="ALL" th:selected="${selectedType == 'ALL'}"
+							th:text="#{user.list.sortbyrole}">Sort by role</option>
+						<option value="STUDENT" th:selected="${selectedType == 'STUDENT'}">Student</option>
+						<option value="TEACHER" th:selected="${selectedType == 'TEACHER'}">Teacher</option>
+						<option value="EMPLOYEE"
+							th:selected="${selectedType == 'EMPLOYEE'}">Employee</option>
+					</select>
+					<!--  <a th:href="@{create}">Create new User</a> -->
+				</form>
+
+			</div>
+		</div>
+
+
+		<table class="table  border card-body" id="class_for_subject_table">
+			<thead class="bg bg-primary">
+				<tr style="color: black">
+					<th>Stt</th>
+					<th class="text-center" th:text="#{label.user.avatar}">Avatar</th>
+					<!-- 		<th class="text-center" th:text="#{label.user.name}"></th> -->
+					<th class="text-center" th:text="#{label.user.name}">Name</th>
+					<th class="text-center" th:text="#{label.user.email}">Email</th>
+					<th class="text-center" th:text="#{label.user.phone}">Phone</th>
+					<th class="text-center">Field</th>
+					<th class="text-center">Active</th>
+				</tr>
+			</thead>
+			<th:block th:if="${#lists.isEmpty(data.content)}">
+				<tr>
+					<td colspan="7" class="text-center" style="color:red;">No students found.</td>
+				</tr>
+			</th:block>
+			<th:block th:unless="${#lists.isEmpty(data.content)}">
+				<tbody th:each="s, iterStat : ${data.content}" th:object="${s}">
+
+					<tr th:classappend="${s.id%2==0 ? 'table-active' : ''}">
+						<td class="text-center" th:text="${iterStat.index + 1}"></td>
+						<td class="text-center"><img
+							style="max-width: 50px; max-height: 50px; display: block; margin: auto;"
+							th:src="@{/getimage/{avatar}(avatar=${s.avatar})}" /></td>
+						<td class="text-center" th:text="*{name}"></td>
+						<td class="text-center" th:text="*{email}"></td>
+						<td class="text-center" th:text="*{phone}"></td>
+
+						<td class="noscrollbar" style="height: 50px;">
+							<select
+								class="form-control" multiple disabled
+								style="border: none; height: 60px; background-color: transparent; overflow-y: scroll; -webkit-overflow-scrolling: touch;">
+									<option th:each="d : *{fields}" th:text="${d.name}"></option>
+							</select>
+						</td>
+
+						<td class="text-center"><a class="btn btn-warning"
+							data-toggle="tooltip" data-placement="top" title="Update"
+							th:href="@{'/admin/user/update/' + *{id}}"> <i
+								class="fas fa-edit"></i>
+
+						</a> <a th:href="@{'/admin/user/detail/' + *{id}}"
+							class="btn btn-info" data-toggle="tooltip" data-placement="top"
+							title="Details"> <i class="fas fa-info-circle"></i>
+						</a></td>
+					</tr>
+				</tbody>
+				</th:block>
+		</table>
+
+
+		<div class="card-footer">
+			<a th:data-s="${data.number+1}" id="back_page_btn"
+				th:classappend="${data.first} ? 'disabled' : ''" class="btn "
+				style="border: solid 1px black; padding: 3px 10px; margin-right: 10px">
+				Previous</a> <a
+				th:each="pageNo : ${#numbers.sequence(0, data.totalPages-1)}"
+				th:classappend="${pageNo == data.number ? 'text-primary' : ''}"
+				class="btn change_page_href_admin_user"
+				style="border: solid 1px black; padding: 3px 10px; margin: 0px 5px"
+				th:text="${pageNo + 1}"> </a> <a th:data-s="${data.number+1}"
+				id="next_page_btn" th:classappend="${data.last} ? 'disabled' : ''"
+				class="btn "
+				style="border: solid 1px black; padding: 3px 10px; margin-left: 10px">
+				Next</a>
+		</div>
+
+
+	</div>
+</body>
+
+
+</html>

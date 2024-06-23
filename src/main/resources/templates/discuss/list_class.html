@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{/layout}">
+<head>
+<title>Content</title>
+</head>
+<body>
+
+	<div layout:fragment="content" class="card ml-4" style="width: 100%">
+
+		<h3 class="card-head text-center">List class Attend</h3>
+		
+		<div class="card-body">
+		
+		
+		<div th:each="s : ${data}" th:object="${s}" 
+		style="width: 100%; padding: 0 10px;; border: 1px solid black; border-radius:5px"  class=" shadow-sm  d-flex align-items-center justify-content-md-between" >
+		<div >
+		<div ><b>Class : </b>
+		<span th:text="*{name}"></span>
+		</div>
+		<div  ><b>Subject : </b>
+		<span th:text="*{subject.name}"></span>
+		</div>
+		<div ><b>Room : </b>
+		<span th:text="*{room.name}"></span>
+		</div>
+		
+			<div sec:authorize="hasAnyAuthority('STUDENT')" ><b>Teacher : </b>
+		<span th:text="*{teacher.name}"></span>
+		</div>
+		</div>
+		<div>
+			<a th:href="@{'/web/discuss/list/'+*{id}}" class="btn btn-info">List Discuss Room</a>
+		</div>
+	
+		</div>
+		
+		
+		</div>
+
+
+	</div>
+</body>
+</html>

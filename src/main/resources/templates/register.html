@@ -1,0 +1,19 @@
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+layout:decorate="~{/nonelayout}">
+
+
+    <div class="main login_main" layout:fragment="content">
+        <div class="container container_login a-container" id="a-container">
+            <form class="form" id="loginForm" th:action="@{/save}"  method="post" >
+              <img th:src="@{/assets/images/logo-university.png}" alt="logo"
+              style="width: 180px; height: 180px;margin-bottom:50px; object-fit:cover;">
+       			<input type="text" class="form__input" id="email" name="email" placeholder="Email" >
+                <input type="text" class="form__input" id="name" name="name" placeholder="Name" >
+                <input type="number" class="form__input" id="phone" name="phone" placeholder="Phone" >
+                <button type="submit" class="button">Register</button>
+            </form> 
+     <!--        <a th:href="/@{/forgot_password}">Forgot your password?</a> -->
+        </div>
+    </div>
+</html>

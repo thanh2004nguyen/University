@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<meta charset="UTF-8">
+<title>Hidden Subject</title>
+
+<style>
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+th, td {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+th {
+	background-color: #f2f2f2;
+}
+</style>
+</head>
+
+<body>
+	<div layout:fragment="content" class="card text-center ml-3">
+		
+		<h2>Subject List</h2>
+		<br>
+		<form style="width: 100%"
+			
+			method="get" th:action="@{/admin/subject/hiddenSubject}" id="form_sort_level">
+			<div>
+				<span>Sort By Level:</span> <select name="level" id="select_level_subject">
+				
+<option value="0" th:selected="${hiddenselectLevel==0}"> All</option>
+					<option th:each="s : ${sblevels}" th:value="${s.id}"
+					th:selected="${s.id== selectLevel}"
+						th:text="${s.name}"></option>
+				</select>
+			</div>
+
+
+		</form>
+		<table id="SubjectTable" class="table  border card-body">
+			<thead class="bg bg-primary">
+				<tr>
+					<th class="text-center">#</th>
+					<th class="text-center">Name</th>
+
+					<th class="text-center">level</th>
+					<th class="text-center">field</th>
+					<th class="text-center">RequiredSubject</th>
+					<th class="text-center">Type</th>
+					<th class="text-center">Credit Action</th>
+					<th class="text-center">Action</th>
+				</tr>
+			</thead>
+			<tbody th:each="subject, iterStat : ${data.content}"
+				th:object="${subject}" th:if="${subject.hidden}">
+				<tr>
+			<td class="text-center" th:text="${iterStat.count}"></td>
+					<td class="text-center" th:text="*{name}"></td>
+
+					<td class="text-center" th:text="*{subjectlevel.name}"></td>
+					<td class="text-center" th:text="*{field.name}"></td>
+
+
+					<td class="text-center">
+						<div class="bg bg-primary">
+							<span th:text="'Optional Subject: '"  class="h6"></span> <span
+								th:each="optSubject, iterStat : ${subject.optionalRequiredSuject}">
+
+								<span th:text="${optSubject}"></span> <span
+								th:if="${not iterStat.last}">, </span>
+
+							</span>
+						</div>
+
+						<div class="bg bg-warning">
+							<span th:text="'Passed Subject: '" class="h6"></span> <span
+								th:each="passSubject, iterStat : ${subject.passedSubjects}">
+								<span th:text="${passSubject}"></span> <span
+								th:if="${not iterStat.last}">, </span>
+							</span>
+						</div>
+					</td>
+					<td class="text-center" th:text="${subject.type}"></td>
+					<td class="text-center" th:text="${subject.creditAction}"></td>
+					<td class="text-center"><a
+						th:href="@{'/Subject/updatesubject/' +*{id}}"
+						class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+						title="Update"><i class="fas fa-edit"></i></a> 
+						<a
+						th:href="@{'/admin/subject/unhidesubject/' +*{id}}" class="btn btn-danger"
+						data-toggle="tooltip" data-placement="top" title="UnHide"><i
+							class="fas fa-exclamation"></i></a></td>
+				</tr>
+
+			</tbody>
+		</table>
+		<!-- <div class="card-footer">
+			<a th:data-s="${data.number+1}" id="back_page_btn"
+				th:classappend="${data.first} ? 'disabled' : ''" class="btn "
+				style="border: solid 1px black; padding: 3px 10px; margin-right: 10px">
+				Previous</a> <a
+				th:each="pageNo : ${#numbers.sequence(0, data.totalPages-1)}"
+				th:classappend="${pageNo == data.number ? 'text-primary' : ''}"
+				class="btn change_page_href_subject"
+				style="border: solid 1px black; padding: 3px 10px; margin: 0px 5px"
+				th:text="${pageNo + 1}"> </a> <a th:data-s="${data.number+1}"
+				id="next_page_btn" th:classappend="${data.last} ? 'disabled' : ''"
+				class="btn "
+				style="border: solid 1px black; padding: 3px 10px; margin-left: 10px">
+				Next</a>
+		</div> -->
+	</div>
+
+
+</body>
+</html>

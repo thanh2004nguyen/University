@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+<head>
+    <meta charset="UTF-8">
+    <title>News Details</title>
+    <style>
+        .news-details {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        
+
+        .news-content {
+            margin-top: 20px;
+            
+        }
+    </style>
+</head>
+<body>
+<article layout:fragment="content">
+<div class="news-details">
+    <h1 th:text="${news.title}"></h1>
+        
+        <span th:utext="${news.content}" style="font-size:20px"></span>
+    <br>
+    <a th:href="@{/}" >Back to News List</a>
+    
+</div>
+</article>
+</body>
+</html>

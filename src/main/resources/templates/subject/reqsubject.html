@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<meta charset="ISO-8859-1">
+<title>List Required Subject</title>
+<style>
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+th, td {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+th {
+	background-color: #f2f2f2;
+}
+</style>
+</head>
+<body>
+<div layout:fragment="content" class="card text-center ml-3">
+<h2>List Required Subject</h2>
+<table th:action="@{RequiredSubject}" method="get" 
+			class="display">
+			<thead>
+				<tr>
+				<th>Subject Name</th>
+					<th>Required Subject Name</th>
+					<th>Status</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody  th:each="reqsubject : ${req}">
+				<tr>
+				
+				<td th:each="subject : ${reqsubject.subject}" 
+				th:text="${subject.name}"></td>
+					
+					 <td th:each="reqSubject : ${reqsubject.requiredsubject}"
+							th:text="${reqSubject.name}"></td> 
+							
+					<td th:text="${reqsubject.status}"></td>
+					 <td>
+					<a th:href="@{'/admin/subject/updatereq/' +*{reqsubject.id}}"  class="btn btn-primary"><i class="fas fa-edit" title="Update"></i></a>
+					</td> 
+			</tr>
+			</table>
+</div>
+</body>
+</html>

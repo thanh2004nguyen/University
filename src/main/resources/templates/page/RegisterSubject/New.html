@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+layout:decorate="~{/layout}">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>New Subject Register</title>
+     <style>
+     
+     .passed-subject {
+    color: green;
+}
+.not-passed-subject {
+    color: red;
+}
+
+
+     .swal2-container {
+  z-index: 20000 !important;
+}
+
+        .subject-level {
+            cursor: pointer;
+            background-color:#d1e5f0;
+            color: Black;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 25px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .subject-level:hover {
+            background-color: #d1e5f0;
+        }
+
+        .subject-list {
+            list-style-type: none;
+            display: none;
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+
+        .subject-box {
+            background-color: #D9D9D9;
+            border: 2px solid #6B4D12;
+            border-radius: 5px;
+            padding: 5px;
+            margin-bottom: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            display:flex;
+            justify-content: space-around;
+      
+        }
+        
+        
+		        /* Modal style */
+		.modal {
+          border: 1px solid #ccc;
+		  display: none; /* Hidden by default */
+		  position: fixed; /* Stay in place */
+		  z-index: 10001; /* Sit on top */
+		  left: 0;
+		  top: 0;
+		  width: 100%;
+		  height: 100%;
+		  overflow: auto; /* Enable scrolling if needed */
+		  background-color: rgb(0,0,0); /* Fallback color */
+		  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+		  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	
+		}
+		
+		.modal-content {
+		  background-color: #fefefe;
+		  margin: 1% auto; /* 15% from the top and centered */
+		  padding: 10px;
+		  border: 1px solid #888;
+		    display: flex; /* Enables flexbox */
+            flex-direction: column; /* Stack children vertically */
+            justify-content: center; /* Center children vertically */
+		}
+		
+			    .class-container
+	    {
+	        margin-left :8%;
+	        background-color:#fafcfc;
+            border: 2px solid #082d63;
+            border-radius: 5px;
+            padding: 5px;
+            margin-bottom: 60px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            width: 85%;
+	    }
+	    
+		
+		/* Close button */
+		.close {
+		  color: red;
+		  float: right;
+		  font-size: 70px;
+		  font-weight: bold;
+		}
+		
+		.close:hover,
+		.close:focus {
+		  color: red;
+		  text-decoration: none;
+		  cursor: pointer;
+		}
+		
+		    .class-List {
+            list-style-type: none;
+      
+        }
+
+        
+        .view-list-class-btn
+        {
+        background-color :#A0CAFD;
+        
+        }
+        
+        .view-detail-class-btn
+        {
+	    background-color : #A0CAFD;
+	    }
+	    
+
+
+	    
+	    .expanded-content	    {
+	        background-color: #ccecfc;
+
+            border-radius: 5px;
+            padding: 5px;
+            margin-bottom: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            display:flex;
+            justify-content: space-around;
+            
+	    }
+	    
+	    .subject-name {
+		  flex-grow: 1;
+		  margin-right: 10px;
+         }
+	    
+	
+
+
+
+    </style>
+</head>
+<body>
+    <article layout:fragment="content">
+    
+            <form>
+            <!-- Select field dropdown -->
+            <select name="fieldId" id="fieldId">
+                <option value="" selected>All Field</option>
+                <!-- Iterate over each field in the list -->
+                <th:block th:each="field : ${fields}">
+                    <option th:value="${field.id}" th:text="${field.name}"></option>
+                </th:block>
+            </select>
+            <span>SELECT FIELD</span>
+            
+            <div>
+            <label>Show All Available Class</label>
+                <input type="checkbox" name="RequiredSubject" value="RequiredSubject">
+            </div>
+        </form>
+       
+        <!-- Iterate over each subject level in the list -->
+        <div th:each="subjectLevel : ${subjectlevels}" th:id="'subjectLevel_' + ${subjectLevel.id}" class="subject-level">
+            <span th:text="${subjectLevel.name}"></span>
+            <ul class="subject-list" th:id="'subjectList_' + ${subjectLevel.id}" >
+                <!-- This will be populated dynamically based on the selected subject level -->
+            </ul>
+        </div>
+ 
+ 
+ 
+<!-- Class List Dialog Modal -->
+<div id="classListModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2 style="text-align: center;font-size:60">CLASS LIST</h2>
+    <ul id="classList" class="class-List"></ul>
+  </div>
+</div>
+        
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Update your existing JavaScript code -->
+<script th:inline="javascript">
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    var storedSubjectId = localStorage.getItem('reopenModalSubjectId');
+    if (storedSubjectId) {
+        fetchAndDisplayClasses(storedSubjectId);
+        localStorage.removeItem('reopenModalSubjectId');
+    }
+    
+    // Add event listeners to each subject level
+    var subjectLevels = document.querySelectorAll('.subject-level');
+    subjectLevels.forEach(function (subjectLevel) {
+        subjectLevel.addEventListener('click', function () {
+            var fieldId = document.getElementById('fieldId').value;
+            var subjectLevelId = subjectLevel.id.split('_')[1];
+            var subjectListElement = document.getElementById('subjectList_' + subjectLevelId);
+    
+            toggleSubjectList(subjectLevelId, fieldId);
+        });
+    });
+
+    // Add event listener to the Select Field
+    document.getElementById('fieldId').addEventListener('change', function () {
+        // Hide all expanded SubjectLevels
+        hideAllSubjectLevels();      
+    });
+
+    // Close the modal when the close button is clicked
+    var closeModal = document.querySelector('.close');
+    closeModal.addEventListener('click', function() {
+        var modal = document.getElementById('classListModal');
+        modal.style.display = 'none';
+    }); 
+});
+
+function toggleSubjectList(subjectLevelId, fieldId) {
+    var subjectListElement = document.getElementById('subjectList_' + subjectLevelId);
+
+    // Check if the subject list is visible or not and toggle its visibility
+    if (subjectListElement.style.display === 'none' || subjectListElement.style.display === '') {    
+        // If the list is hidden, show it
+        subjectListElement.style.display = 'block';
+        // Fetch and populate subjects for the clicked subject level
+        populateSubjectList(fieldId, subjectLevelId, subjectListElement);
+
+        // Add event listener to the subject list to prevent hiding when clicking inside it
+        subjectListElement.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    } else {
+        // If the list is visible, hide it
+        subjectListElement.style.display = 'none';
+    }
+}
+
+function populateSubjectList(fieldId, subjectLevelId, subjectListElement) {
+    // Make AJAX call to fetch subjects for the selected field and subject level
+       var requiredSubjectCheckbox = document.querySelector('input[name="RequiredSubject"]');
+    var requiredSubject = requiredSubjectCheckbox ? requiredSubjectCheckbox.checked : false;
+    console.log(requiredSubject);
+    
+    var xhr = new XMLHttpRequest();
+    var url = '/web/ClassRegister/listSubjectByStudentAndLevel?fieldId=' + (fieldId ? fieldId : '0') + '&subjectLevelId=' + subjectLevelId + '&requiredSubject='+requiredSubject ;
+    xhr.open('GET', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var subjects = JSON.parse(xhr.responseText);
+
+            // Clear existing content
+            subjectListElement.innerHTML = '';
+            if (subjects.length === 0) {
+                // If the array is empty, show "No Subject" message
+                var noSubjectListItem = document.createElement("li");
+                noSubjectListItem.textContent = "No Subject";
+                subjectListElement.appendChild(noSubjectListItem);
+            } else {
+                // Populate the subject list with fetched subjects
+            	subjects.forEach(function (subject) {
+            	    var listItem = document.createElement("li");
+            	    listItem.classList.add("subject-box");
+            	    
+            	    var subjectNameSpan = document.createElement("span"); // Create a span for the subject name
+            	    subjectNameSpan.classList.add("subject-name");
+            	    subjectNameSpan.textContent = subject.name;
+            	    listItem.appendChild(subjectNameSpan); // Append the span to the list item
+            	   
+            	    var buttonContainer = document.createElement("div");
+            	    buttonContainer.classList.add("button-container");
+            	    var viewListClassBtn = document.createElement("button");
+            	    viewListClassBtn.textContent = "View List of Classes";
+            	    viewListClassBtn.classList.add("view-list-class-btn");
+            	    // Add event listener to the ViewListClass button
+            	    viewListClassBtn.addEventListener('click', function () {
+            	        fetchAndDisplayClasses(subject.id);
+            	    });
+            	    buttonContainer.appendChild(viewListClassBtn);
+            	    listItem.appendChild(buttonContainer);
+            	    subjectListElement.appendChild(listItem);
+            	});
+            }
+        }
+    };
+    xhr.send();
+}
+
+function hideAllSubjectLevels() {
+    var subjectLevels = document.querySelectorAll('.subject-level');
+    subjectLevels.forEach(function (subjectLevel) {
+        var subjectLevelId = subjectLevel.id.split('_')[1];
+        var subjectListElement = document.getElementById('subjectList_' + subjectLevelId);
+        // Hide the subject list
+        subjectListElement.style.display = 'none';
+        // Clear the subject list contents
+        subjectListElement.innerHTML = '';
+    });
+}
+
+function fetchAndDisplayClasses(subjectId) {
+    // Make an AJAX call to fetch classes for the selected subject
+    var xhr = new XMLHttpRequest();
+    var url = '/web/ClassRegister/listClassForSubject?subjectId=' + subjectId;
+    xhr.open('GET', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var classes = JSON.parse(xhr.responseText);
+            var modal = document.getElementById('classListModal');
+            var classList = document.getElementById('classList');
+            classList.innerHTML = '';
+            if (classes.length === 0) {
+                // If no classes are available, display a message
+                var noClassListItem = document.createElement("li");
+                noClassListItem.textContent = "No Classes Available";
+                classList.appendChild(noClassListItem);
+            } else {
+                // Populate the class list
+            	classes.forEach(function (classItem) {
+            	    // Create a container for each class item and its details
+            	    var container = document.createElement("div");
+            	    container.classList.add("class-container");
+
+            	    // Create the list item for the class details
+            	    var listItem = document.createElement("li");
+            	    listItem.textContent = classItem.name +', Start: ' + classItem.slotStart + ', End: ' + classItem.slotEnd + ', WeekDay: ' + getWeekdayString(classItem.weekDay);
+            	    
+            	    if(classItem.conflict || classItem.isSameClass)
+                	    {
+            	    	 var prerequisiteText = document.createElement('span');
+            	    	  prerequisiteText.textContent = " Conflict Slot";
+            	   	      prerequisiteText.style.color = "#FF0000"; 
+            	   	   	  listItem.appendChild(prerequisiteText);          	 
+            	    	  container.style.backgroundColor = "#b7ddf7";
+                	    }
+
+            	    if(!classItem.isHaveRequiredSubject)
+            	    {
+            	    	  var prerequisiteText = document.createElement('span');
+            	    	  prerequisiteText.textContent = " Require Prerequisite Subject";
+            	    	   prerequisiteText.style.color = "#FF0000"; 
+            	    	  listItem.appendChild(prerequisiteText);
+        	    	      container.style.backgroundColor = "#b7ddf7";
+        	 
+            	    }
+            	    container.appendChild(listItem);
+
+            	    // Create the button for showing details
+            	    var showDetailBtn = document.createElement("button");
+            	    showDetailBtn.textContent = "Show Detail";
+            	    showDetailBtn.classList.add("show-detail-btn");
+            	    showDetailBtn.style.backgroundColor = "#00DFF7"; 
+
+            	    // Add event listener to the show detail button
+            	    showDetailBtn.addEventListener('click', function () {
+
+            	    	  var expandedContent = listItem.querySelector(".expanded-content");
+            	    	    if (expandedContent) {
+            	    	        // If already expanded, hide details and change button text to "Show Detail"
+            	    	        collapseListItem(listItem);
+            	    	        showDetailBtn.textContent = "Show Detail";
+            	    	    } else {
+            	    	        // If not expanded, expand details and change button text to "Hide Detail"
+            	    	        expandListItem(listItem, classItem);
+            	    	        showDetailBtn.textContent = "Hide Detail";
+            	    	    }
+            	    	    
+            	    });
+
+            	    
+            	    container.appendChild(showDetailBtn);
+
+            	    // Append the container to the class list
+            	    classList.appendChild(container);
+            	});
+            }
+            // Show the modal
+            modal.style.display = 'block';
+        }
+    };
+    xhr.send();
+}
+
+
+function expandListItem(listItem, classItem) {
+    // Remove any previously expanded content
+    var expandedContent = listItem.querySelector(".expanded-content");
+    if (expandedContent) {
+        expandedContent.remove();
+    }
+
+    // Create a container for the expanded content
+    expandedContent = document.createElement("div");
+    expandedContent.classList.add("expanded-content");
+    expandedContent.style.display = "flex";
+    expandedContent.style.flexDirection = "column";
+
+    // Part 1: Info about the class (Teacher, Week Day, Slot Start, Slot End)
+    var infoContainer1 = document.createElement("div");
+    infoContainer1.style.display = "flex";
+    infoContainer1.style.justifyContent = "space-evenly";
+    infoContainer1.style.marginBottom = "10px";
+
+    var detail1 = document.createElement("p");
+    detail1.innerHTML = "Teacher: " + classItem.teacher.name + "<br><br>Week Day: " 
+    + getWeekdayString(classItem.weekDay) + "<br><br>Current Quantity: " + classItem.currentQuantity + "<br><br>Max Quantity: " +  classItem.quantity ;
+    detail1.style.fontSize = "25px";
+    infoContainer1.appendChild(detail1);
+
+    var detail2 = document.createElement("p");
+
+ // Function to generate HTML with color based on subject status
+ function generateSubjectHtml(subjectList, passedSubjects) {
+     return subjectList.map(subject => {
+         var isPassed = passedSubjects.includes(subject);
+         var cssClass = isPassed ? 'passed-subject' : 'not-passed-subject';
+         return `<span class="${cssClass}">${subject}</span>`;
+     }).join(', ');
+ }
+
+ var requiredSubjectsHtml = generateSubjectHtml(classItem.requiredSubject, classItem.passedSubjects);
+ var optionalRequiredSubjectsHtml = generateSubjectHtml(classItem.optionalRequiredSuject, classItem.passedSubjects);
+
+ detail2.innerHTML = "Subject Name: " + classItem.subject.name + "<br><br>Subject Level: " 
+     + classItem.subject.subjectlevel.name + "<br><br>Required Subject: " + requiredSubjectsHtml + "<br><br>Optional Required Subject: " + optionalRequiredSubjectsHtml + "<br><br>Passed All Required Subject: " + classItem.isHaveRequiredSubject ;
+ detail2.style.fontSize = "25px";
+
+ infoContainer1.appendChild(detail2);
+ expandedContent.appendChild(infoContainer1);
+
+    expandedContent.appendChild(infoContainer1);
+
+ // Part 2: Table
+    var infoContainer2 = document.createElement("div");
+    infoContainer2.style.marginBottom = "10px";
+
+    // Create and populate the table
+    var table = document.createElement("table");
+    table.style.borderCollapse = "collapse"; // Ensure borders are collapsed
+
+    // Create table headers
+    var tr1 = document.createElement("tr");
+    var slotHeader = document.createElement("th");
+    slotHeader.textContent = "Slot";
+    slotHeader.style.border = "1px solid black"; // Add border
+    tr1.appendChild(slotHeader);
+
+    var daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]; // Array of days
+    daysOfWeek.forEach(function(day) {
+        var th = document.createElement("th");
+        th.textContent = day;
+        th.style.border = "1px solid black"; // Add border
+        tr1.appendChild(th);
+    });
+    table.appendChild(tr1);
+
+    // Populate the table rows with slot data
+    for (var i = classItem.slotStart; i <= classItem.slotEnd; i++) {
+        var tr = document.createElement("tr");
+
+        // Slot column
+        var slotCell = document.createElement("td");
+        slotCell.textContent = "Slot " + i;
+        slotCell.style.border = "1px solid black"; // Add border
+        tr.appendChild(slotCell);
+
+        // Weekday columns
+        for (var j = 1; j <= 6; j++) { // Assuming weekdays are numbered from 1 to 6
+            var td = document.createElement("td");
+            td.style.border = "1px solid black"; // Add border
+            if (j === classItem.weekDay) { // Check if current column is the weekday column
+                td.style.backgroundColor = "blue"; // Change background color to blue
+            }
+            tr.appendChild(td);
+        }
+
+        table.appendChild(tr);
+    }
+
+    infoContainer2.appendChild(table);
+    expandedContent.appendChild(infoContainer2);
+
+    // Part 3: Register button
+    var registerButton = document.createElement("button");
+    registerButton.textContent = "Register";
+    registerButton.classList.add("register-button");
+    registerButton.style.backgroundColor ="#00DFF7";
+    if (classItem.isSameClass || classItem.conflict || classItem.isHaveRequiredSubject ==false ) {
+        registerButton.disabled = true;
+        registerButton.style.filter = "blur(1px)";
+    }
+
+    // Add event listener to the register button
+    registerButton.addEventListener('click', function () {
+    	RegisterFunction(classItem);
+    });
+
+    expandedContent.appendChild(registerButton);
+
+    // Append the expanded content to the list item
+    listItem.appendChild(expandedContent);
+}
+
+
+function RegisterFunction(classItem) {
+	
+    var xhr = new XMLHttpRequest();
+    var url = '/web/ClassRegister/ClassRegister';
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+    	
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Register Successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    // Refresh the page after the success message
+  
+                   localStorage.setItem('reopenModalSubjectId', classItem.subject.id);
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Can't Add to Register List",
+                    text: "Please Try Later",
+                    footer: '<a href="#">Why do I have this issue?</a>',
+                    timer: 1500
+                }).then(() => {
+                        // Refresh the page after the success message
+                        location.reload();
+                });
+            }
+        }
+    };
+    var jsonData = JSON.stringify(classItem);
+    xhr.send(jsonData);
+}
+
+
+function getWeekdayString(weekday) {
+    switch (weekday) {
+        case 1:
+            return "Monday";
+        case 2:
+            return "Tuesday";
+        case 3:
+            return "Wednesday";
+        case 4:
+            return "Thursday";
+        case 5:
+            return "Friday";
+        case 6:
+            return "Saturday";
+        case 7:
+            return "Sunday";
+        default:
+            return "Invalid Weekday";
+    }
+}
+
+function collapseListItem(listItem) {
+    // Your collapseListItem function implementation here
+    var expandedContent = listItem.querySelector(".expanded-content");
+    if (expandedContent) {
+        expandedContent.remove();
+    }
+}
+</script>
+
+    </article>
+    
+
+</body>
+</html>

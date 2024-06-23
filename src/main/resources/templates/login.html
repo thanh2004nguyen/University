@@ -1,0 +1,38 @@
+
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{/nonelayout}">
+
+
+<div class="main login_main" layout:fragment="content">
+
+	<div class="container container_login a-container" id="a-container">
+		<form class="form" id="loginForm" th:action="@{/login}" method="post"style="">
+
+			<img th:src="@{http://localhost:8081/getimage/logo_single.png}" alt="logo"
+			style="width: 180px; height: 180px; object-fit:cover;">
+			<br />	<br />
+
+			<div style="color: green; position: absolute; margin-bottom: 75px;"
+				th:if="${successMessage}" class="success-message"
+				th:text="${successMessage}"></div>
+
+			<input type="text" class="form__input" id="email" name="email"
+				placeholder="Email" required> <input type="password"
+				class="form__input" id="password" name="password"
+				placeholder="Password" required> <i
+				class="uil uil-eye-slash showHidePw" id="togglePassword"></i> <br />
+			<a style="margin-right: 200px; font-size: 15px" class="forgot"
+				th:href="@{/forgot}">Forgot password</a>
+			<button type="submit" class="button">Login</button>
+			<br />
+			<div class="login-signup">
+				<span class="text">Not a member? <a style="font-size: 16px"
+					th:href="@{/register}" class="text signup-link">Signup Now</a>
+				</span>
+			</div>
+		</form>
+	</div>
+</div>
+
+</html>

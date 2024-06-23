@@ -1,0 +1,494 @@
+
+<aside th:fragment="sidebar" style="height:100px;"
+	class="main-sidebar sidebar-dark-primary elevation-4" id="sidebar">
+
+
+
+		<div id="side_user_info" 
+		sec:authorize="isAuthenticated()"
+			style="border-bottom: solid 1px gray; height: 120px;">
+
+			<div class="dropdown-container">
+				<details class="dropdown right" >
+					<summary class="avatar" style="display: flex; width:100%; height: 100%">
+
+
+						<img
+							src="https://gravatar.com/avatar/00000000000000000000000000000000?d=mp">
+
+						
+							<span
+								style="line-height: 2em; padding: 0 0 0 7px; text-transform: none; font-size: 18px; font-weight: normal; font-style: italic; letter-spacing: -0.005em; word-spacing: 1px; letter-spacing: none;"
+								sec:authentication="principal.user.name"></span><span
+								sec:authentication="principal.user.code"
+								style="line-height: 2em; padding-top:22px;transform: translateX(-35px); text-transform: none; font-size: 15px; font-weight: bold; font-style: italic; letter-spacing: -0.005em; word-spacing: 1px; letter-spacing: none;"></span>
+					
+
+					</summary>
+					<ul  class="event" style="position: fixed;
+		                top: 70px;;
+		                left: -30px;
+		                background-color: white;
+		                border: 1px solid #ccc;
+		                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		                width: 200px;
+		                padding: 10px;
+		                z-index: 10000;" >
+						<!-- Optional: user details area w/ gray bg -->
+						<li>
+							<p>
+								<span>Welcome <span class="bold"
+									sec:authentication="principal.name"></span>
+								</span> <span class="avatar_hiddent" style="display: none;"
+									sec:authentication="principal.user.avatar"></span> <span
+									class="block italic" sec:authentication="principal.user.email"></span>
+							</p>
+						</li>
+						<!-- Menu links -->
+						<li><a th:href="@{/web/admin/profile}" id="profile-link"> <span
+								class="material-symbols-outlined">Your profile</span>
+						</a></li>
+						<li><a href="#"> <span class="material-symbols-outlined">Setting</span>
+						</a></li>
+						<li><a href="#"> <span class="material-symbols-outlined">Help</span>
+						</a></li>
+						<!-- Optional divider -->
+						<li class="divider"></li>
+
+						<li><a th:href="@{/logout}"> <span
+								class="material-symbols-outlined">Logout</span>
+						</a></li>
+					</ul>
+
+					
+				</details>
+			</div>
+
+
+		</div>
+
+
+
+
+<!-- nếu chưa đăng nhập -->
+		<div id="side_user_info" sec:authorize="!isAuthenticated()"
+			style="border-bottom: solid 1px gray; height: 120px;">
+
+			<div style="width:100%; height: 100%; font-size: 20px; font-family:bold; transform:translateX(40%)
+			" class="d-flex align-items-center">
+				 <a href="/login">Login</a>
+			</div>
+
+
+		</div>
+
+		<div class="overlay" id="overlay" ></div>
+		<!-- Lớp phủ -->
+
+		<div class="profile-container" id="profile-form" sec:authorize="isAuthenticated()"
+			style="display: none;">
+			<div class="profile-section">
+				<h5>Account information</h5>
+				<div class="avatar-container">
+					<img id="avatar-large" src="large-avatar.jpg" alt="Avatar"
+						style="width: 100%; height: 200px; object-fit: cover;"> <img
+						id="avatar-small" src="small-avatar.jpg" alt="Avatar"
+						style="width: 80px; height: 80px; border-radius: 50%; transform: translateY(-15px);">
+					<!-- <button id="change-background-btn"><i class="fas fa-image"></i></button> -->
+					<span class="bold namejs" sec:authentication="principal.name"
+						style="font-family: Lucida Console Courier New; font-size: 26px; padding-right: 20px;"></span>
+				</div>
+			</div>
+			<div class="personal-info-section" sec:authorize="isAuthenticated()">
+				<h5>Personal information</h5>
+				<p th:name="id" class="b" style="display: none"
+					sec:authentication="principal.user.id"></p>
+				<div class="div-flex" style="display:flex;">
+					<label for="phone" class="a" style="width: 50%">Phone:</label>
+					<p class="b phonejs" sec:authentication="principal.phone"></p>
+				</div>
+				<div class="div-flex" style="display:flex;">
+					<label for="position" class="a" style="width: 50%">Role:</label>
+					<p class="b" sec:authentication="principal.authorities"></p>
+				</div>
+				<div class="div-flex" style="display:flex;">
+					<label for="address" class="a" style="width: 50%">Address:</label>
+					<p class="b addressjs" sec:authentication="principal.address"></p>
+				</div>
+				<div class="div-flex" style="display:flex;">
+					<label for="information" class="a" style="width: 50%">Information:</label>
+					<p class="b infojs" sec:authentication="principal.user.infomation"></p>
+				</div>
+				<a id="update-profile-btn" th:href="@{/admin/user/profile}">Edit</a>
+			</div>
+		</div>
+	
+
+
+
+
+	<!-- Sidebar -->
+	<div class="sidebar" >
+
+		<!-- Sidebar Menu -->
+		<nav class="mt-2">
+			<ul class="nav nav-pills nav-sidebar flex-column"
+				data-widget="treeview" role="menu" data-accordion="false">
+						
+				
+				<li class="nav-item has-treeview" style=" border-bottom:2px solid gray ;color:white">
+				<a class="nav-link"> 
+			
+				<i class="fas fa-chalkboard nav-icon"></i>
+			
+						<p >
+							Manager Class <i  class="fas fa-angle-left right"></i> 
+							
+						</p>
+				</a>
+					<ul class="nav nav-treeview">
+						
+						
+					
+						<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/class/list}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >List Class</p>
+						</a>
+						</li>
+						<li  class="nav-item">
+						<a
+							th:href="@{/admin/class/create}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >Create Class</p>
+						</a></li>
+						
+							<li  class="nav-item">
+						<a
+							th:href="@{/admin/class/update/status}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >Update Status class</p>
+						</a></li>
+					</ul>
+					</li>
+					
+				<!-- admin semester-->
+
+					<li class="nav-item has-treeview" style=" border-bottom:2px solid gray ;color:white">
+						<a class="nav-link"> 
+					
+						<i class="fas fa-chalkboard nav-icon"></i>
+					
+								<p >
+									Manager Semester <i  class="fas fa-angle-left right"></i> 
+									
+								</p>
+						</a>
+							<ul class="nav nav-treeview">
+								
+								<li style=" border-bottom:2px solid gray" class="nav-item">
+								<a 
+									th:href="@{/admin/semester/listsemester}"
+									class="nav-link"> 
+									<i  class="far fa-circle nav-icon"></i>
+										<p >List Semester</p>
+								</a>
+								</li>	
+								
+									<li style=" border-bottom:2px solid gray" class="nav-item">
+								<a 
+									th:href="@{/admin/semester/createsemester}"
+									class="nav-link"> 
+									<i  class="far fa-circle nav-icon"></i>
+										<p >Create Semester</p>
+								</a>
+								</li>	
+							</ul>
+							</li>
+
+					<!-- admin subject -->
+					
+					<li class="nav-item has-treeview" style=" border-bottom:2px solid gray ;color:white">
+				<a class="nav-link"> 
+			
+				<i class="fas fa-chalkboard nav-icon"></i>
+			
+						<p >
+							Manager Subject <i  class="fas fa-angle-left right"></i> 
+							
+						</p>
+				</a>
+					<ul class="nav nav-treeview">
+						
+						<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/subject/list}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >List Subject</p>
+						</a>
+						</li>	
+						
+							<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/subject/create}"
+							class="nav-link"> 
+							<i  class="fas fa-book "></i>
+							
+						
+								<p >Create Subject</p>
+						</a>
+						</li>	
+				
+					<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/subject/listrequiredsubject}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >List required Subject</p>
+						</a>
+						</li>	
+						
+						<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/subject/hiddenSubject}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >List hidden Subject</p>
+						</a>
+						</li>
+			
+					</ul>
+					</li>
+					
+					
+								<!-- admin news -->
+					
+					<li class="nav-item has-treeview" style=" border-bottom:2px solid gray ;color:white">
+				<a class="nav-link"> 
+			
+				<i class="fas fa-chalkboard nav-icon"></i>
+			
+						<p >
+							Manager News <i  class="fas fa-angle-left right"></i> 
+							
+						</p>
+				</a>
+					<ul class="nav nav-treeview">
+						
+						<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/news/index}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >List news</p>
+						</a>
+						</li>	
+						
+							<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/news/create}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >Create News</p>
+						</a>
+						</li>	
+				
+					
+						
+				
+			
+					</ul>
+					</li>
+					
+					
+					
+					
+									
+		
+					
+				
+					
+					
+							
+				<li class="nav-item has-treeview" style=" border-bottom:2px solid gray ;color:white">
+				<a class="nav-link"> 
+			
+				<i class="fas fa-umbrella-beach nav-icon"></i>
+						<p >
+							Manager Holiday <i  class="fas fa-angle-left right"></i> 
+							
+						</p>
+				</a>
+					<ul class="nav nav-treeview">
+						
+						
+					
+						<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/holiday/index}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >List holiday</p>
+						</a>
+						</li>
+						<li  class="nav-item">
+						<a
+							th:href="@{/admin/holiday/create}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >Create Holiday</p>
+						</a></li>
+					</ul>
+					</li>
+					
+					
+									
+									<li class="nav-item has-treeview" style=" border-bottom:2px solid gray ;color:white">
+				<a class="nav-link"> 
+			
+				<i class="fas fa-user nav-icon"></i>
+						<p >
+							Manager User <i  class="fas fa-angle-left right"></i> 
+							
+						</p>
+				</a>
+					<ul class="nav nav-treeview">
+						
+						
+					
+						<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/user/list}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >List user</p>
+						</a>
+						</li>
+						<li  class="nav-item">
+						<a
+							th:href="@{/admin/user/create}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >Create user</p>
+						</a></li>
+						
+									<li  class="nav-item">
+						<a
+							th:href="@{/admin/user/updateStatus}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >Update Status</p>
+						</a></li>
+						
+						
+					</ul>
+					</li>
+					
+										<li class="nav-item has-treeview" style=" border-bottom:2px solid gray ;color:white">
+				<a class="nav-link"> 
+			
+				<i class="fas fa-user nav-icon"></i>
+						<p >
+							Manager Mark <i  class="fas fa-angle-left right"></i> 
+							
+						</p>
+				</a>
+					<ul class="nav nav-treeview">
+						
+						
+					
+						<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/mark/list}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >List mark for class</p>
+						</a>
+						</li>
+
+						</ul>
+						</li>
+						
+					
+					
+						<li class="nav-item has-treeview" style=" border-bottom:2px solid gray ;color:white">
+				<a class="nav-link"> 
+			
+				<i class="fas fa-bell nav-icon"></i>
+				
+			
+			
+						<p >
+							Manager Notification <i  class="fas fa-angle-left right"></i> 
+							
+						</p>
+				</a>
+					<ul class="nav nav-treeview">
+						
+						
+					
+						<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/notify/list}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >List notification</p>
+						</a>
+						</li>
+						<li  class="nav-item">
+						<a
+							th:href="@{/admin/notify/create}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >Create new Notification</p>
+						</a></li>
+					</ul>
+					</li>
+
+				<li class="nav-item has-treeview" style=" border-bottom:2px solid gray ;color:white">
+				<a class="nav-link"> 
+			
+				<i class="fas fa-bell nav-icon"></i>
+				
+			
+			
+						<p >
+							Manager Payment <i  class="fas fa-angle-left right"></i> 
+							
+						</p>
+				</a>
+					<ul class="nav nav-treeview">
+						
+						
+					
+						<li style=" border-bottom:2px solid gray" class="nav-item">
+						<a 
+							th:href="@{/admin/adminpayment}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >List Payment</p>
+						</a>
+						</li>
+						<li  class="nav-item">
+						<a
+							th:href="@{/admin/paymentoffline}"
+							class="nav-link"> 
+							<i  class="far fa-circle nav-icon"></i>
+								<p >Payment Offline</p>
+						</a>
+						</li>
+					</ul>
+					</li>
+
+			</ul>
+		</nav>
+		<!-- /.sidebar-menu -->
+	</div>
+	<!-- /.sidebar -->
+</aside>
+</div>

@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>	
+<title>Edit Profile</title>
+<meta charset="UTF-8">
+</head>
+<body>
+	<div layout:fragment="content" >
+		<div class="container bootstrap snippets bootdey">
+			<h1 class="text-primary"
+				style="transform: translateX(40%); margin-top: 40px;">Edit
+				Profile</h1>
+			<hr>
+			<div class="row" >
+				<!-- left column -->
+				<div class="col-md-3">
+					<div class="text-center">
+						<img th:src="@{/getimage/{avatar}(avatar=${user.avatar})}"
+							class="avatar img-circle img-thumbnail" alt="avatar" style="margin-bottom:15px;">
+						<!-- <h4 th:text="${user.name}">User Name</h4> -->
+						
+						<ul class="one" style="list-style: circle;">
+							<li style="float:left" th:each="field : ${userFields}" th:text="${field.name}"></li>
+						</ul>
+						
+						<!--<h6>Upload a different photo...</h6>
+						 <form th:action="@{/admin/user/profile/avatar}" method="post"
+							enctype="multipart/form-data">
+							<input type="hidden" name="id" th:value="${user.id}" /> 
+							<div style="display:flex; ">
+							<input
+								type="file" class="form-control" name="avatar"> <input
+								type="submit" class="btn btn-primary" value="Upload">
+							</div>
+						</form> -->
+
+					</div>
+				</div>
+
+				<!-- edit form column -->
+				<div class="col-md-9 personal-info">
+					<div id="notificationDiv"
+						class="alert alert-info alert-dismissable" style="display: none;">
+						<a class="panel-close close" data-dismiss="alert">×</a> <i
+							class="fa fa-coffee"></i> <strong id="alert-text"
+							th:text="${success}"></strong>
+					</div>
+					<h3>Personal info</h3>
+
+
+					<form th:action="@{/web/profile}" th:object="${user}"
+						method="post" enctype="multipart/form-data"
+						class="form-horizontal" role="form">
+						<input name="id" type="hidden" th:field="*{id}" />
+						<div class="form-group">
+							<label class="col-lg-3 control-label">Name:</label>
+							<div class="col-lg-8">
+								<input class="form-control" type="text" th:field="*{name}"
+									readonly="readonly">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-lg-3 control-label">Email:</label>
+							<div class="col-lg-8">
+								<input class="form-control" type="text" th:field="*{email}"
+									readonly="readonly">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-3 control-label">Phone:</label>
+							<div class="col-lg-8">
+								<input class="form-control" type="text" th:field="*{phone}"
+								readonly="readonly"	>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-3 control-label">Address:</label>
+							<div class="col-lg-8">
+								<input class="form-control" type="text" th:field="*{address}"
+									readonly="readonly">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-3 control-label">Information:</label>
+							<div class="col-lg-8">
+								<input class="form-control" type="text" th:field="*{infomation}"
+									>
+							</div>
+						</div>
+						<input style="transform: translateX(190%)" type="submit"
+							class="Btn  btn btn-primary" value="Save Changes" />
+					</form>
+				</div>
+			</div>
+		</div>
+		<hr>
+	</div>
+</body>
+</html>

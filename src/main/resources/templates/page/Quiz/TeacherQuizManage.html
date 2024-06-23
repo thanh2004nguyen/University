@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+layout:decorate="~{/layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>University Planner - UniHub</title>
+<link rel="stylesheet" href="styles.css">
+<style type="text/css">
+
+
+
+.container1 {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center; /* Align text to the left for a more traditional look */
+    border: 1px solid #ddd; /* Subtle border */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06); /* Soft shadow for depth */
+    background-color:#c2ebf0;
+          max-height: 600px;
+        overflow-y: auto; 
+}
+
+
+header h1 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.module-count {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 16px; /* Slightly larger font size */
+}
+
+.module-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.module {
+    height:100px;
+    background-color:#9eb5b8;
+    border-radius: 5px; /* Less pronounced border-radius */
+    padding: 15px; /* Adequate padding */
+    font-size: 30px; /* Readable font size */
+    color: #333; /* Darker text for better readability */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow */
+    transition: transform 0.2s ease; /* Smooth transition for hover effect */
+}
+
+.module:hover {
+    transform: translateY(-3px); /* Slight lift on hover */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Shadow increases on hover */
+}
+
+/* For responsive design */
+@media (max-width: 640px) {
+    .container1 {
+        margin: 10px;
+        padding: 10px;
+    }
+    /* Adjust font sizes for smaller screens as needed */
+}
+
+
+    .content-container {
+           background-color:#C1D8C3;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+
+
+    .quiz-list {
+    
+        border-radius: 15px;
+        padding: 20px;
+        font-size: 14px;
+        color: #333;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100px;
+        margin-bottom: 20px;
+    }
+    
+        .flex-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-start;
+    }
+
+    .container1, .quiz-list-container {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .quiz-list-container {
+        background-color:#c2ebf0; /* For visibility */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-radius: 5px;
+  
+        width: 500px; /* Adjust width as needed */
+        border: 2px solid #000;
+        max-width: 900px;
+        padding: 20px;
+        text-align: center;
+        display: none;
+        max-height: 600px;
+        overflow-y: auto; 
+    }
+
+    .quiz-item {
+        background-color: #f9f9f9; 
+        border: 1px solid #ddd;
+        margin-bottom: 10px; 
+        padding: 15px;
+        border-radius: 5px; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .time-ended {
+    background-color: #ff6347; /* Red color */
+    color: white; /* Text color */
+}
+
+.active-module {
+    background-color: #8bd5f0; /* or any color you like */
+}
+
+</style>
+</head>
+<body layout:fragment="content">
+
+<!-- Error Message here  -->
+<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<div class="flex-container">
+    <!-- Class List Container -->
+    <div class="container1">
+        <header>
+            <h3>LIST CLASS THIS SEMESTER</h3>
+            <div class="module-count"></div>
+        </header>
+        <div class="module-grid">
+            <!-- Class modules here -->
+    <div class="module" th:each="list:${listClass}" th:data-class-id="${list.id}" th:onclick="'showQuizList(\'' + ${list.id} + '\')'">
+    <div th:text="${list.Subject.name} + '  ' + ${list.name}"></div>
+</div>
+        </div>
+    </div>
+
+    <!-- Quiz List Container, now to the right of the Class List Container -->
+    <div class="quiz-list-container" id="quizListContainer">
+      
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function showQuizList(classId) {
+    var modules = document.querySelectorAll('.module');
+    modules.forEach(function(module) {
+        module.classList.remove('active-module');
+    });
+
+    modules.forEach(function(module) {
+        if (module.getAttribute('data-class-id') === classId.toString()) {
+            module.classList.add('active-module');
+        }
+    });
+
+    var xhr = new XMLHttpRequest();
+    var url = '/api/public/listQuizBySubject?classId=' + classId;
+    xhr.open('GET', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var quizzes = JSON.parse(xhr.responseText);
+            fetchAppliedQuizzes(classId, quizzes);
+        }
+    };
+    xhr.send();
+}
+
+function fetchAppliedQuizzes(classId, quizzes) {
+    fetch('/api/public/listAlreadyApplied?classId=' + classId)
+    .then(response => response.json())
+    .then(appliedQuizzes => {
+        var quizListHtml = quizzes.map(function(quiz) {
+            let quizType;
+            switch (quiz.type) {
+                case "1":
+                    quizType = 'Final Exam';
+                    break;
+                case "2":
+                    quizType = 'Middle Exam';
+                    break;
+                case "3":
+                    quizType = 'First Exam';
+                    break;
+                default:
+                    quizType = 'Unknown Type';
+            }
+            
+            var isApplied = appliedQuizzes.some(aq => aq.quiz.id === quiz.id);
+            return `
+                <div class="quiz-item">
+                    <p>Name: ${quiz.name} </p>
+                    <p>Type Exam: ${quizType}  </p>
+                    <p>Quiz Duration: ${quiz.duration} Minute </p>
+                    <button ${isApplied ? 'disabled' : ''} onclick="startQuiz('${quiz.id}', '${classId}', this)">${isApplied ? 'Already Applied' : 'Apply'}</button>
+                </div>
+            `;
+        }).join('');
+
+        if (quizzes.length === 0) {
+            quizListHtml = '<div class="no-quiz-message">YOU DON\'T HAVE ANY QUIZ!!! LET CREATE ONE</div>';
+        }
+
+        var quizListContainer = document.getElementById('quizListContainer');
+        quizListContainer.innerHTML = quizListHtml;
+        quizListContainer.style.display = 'block';
+    });
+}
+
+function startQuiz(quizId, classId, button) {
+    Swal.fire({
+        title: 'You Need Input Date Start And Date End To Apply This Exam To Class!!!',
+        html: `
+            Start Date: <input type="date" id="swal-input1" class="swal2-input" placeholder="Start Date"><br>
+            End Date: <input type="date" id="swal-input2" class="swal2-input" placeholder="End Date">
+        `,
+        focusConfirm: false,
+        preConfirm: () => {
+            const dateStart = Swal.getPopup().querySelector('#swal-input1').value;
+            const dateEnd = Swal.getPopup().querySelector('#swal-input2').value;
+            if (!dateStart || !dateEnd) {
+                Swal.showValidationMessage(`Please enter start and end dates`);
+                return false;
+            }
+            return { dateStart: dateStart, dateEnd: dateEnd };
+        },
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Apply Quiz',
+        showCancelButton: true,
+        icon: 'question'
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            const postData = {
+                quizId: quizId,
+                classId: classId,
+                startDate: result.value.dateStart,
+                endDate: result.value.dateEnd
+            };
+            
+            // Send POST request using Fetch API
+            fetch('/web/quiz/ApplyQuiz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData)
+            })
+            .then(response => response.json())  // Assuming the server responds with JSON
+            .then(data => {
+                console.log('Success:', data);
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Quiz applied successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Change button to "Already Applied"
+                    button.textContent = 'Already Applied';
+                    button.disabled = true;
+                });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to apply quiz.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            });
+        }
+    });
+}
+
+
+</script>
+
+</body>
+</html>

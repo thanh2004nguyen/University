@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<article layout:fragment="content">
+		<h1>Payments Offline</h1>
+
+
+		<table class="table  border card-body" id="class_for_subject_table" >
+			<thead class="bg bg-primary">
+				<tr style="color: black">
+					<th>Stt</th>
+					<th class="text-center">User</th>
+
+					<th class="text-center">Subject Name</th>
+					<th class="text-center">Credit</th>
+					<th class="text-center">Cash</th>
+					<th class="title-margin">Select</th>
+
+				</tr>
+			</thead>
+			<tbody>
+
+				<tr th:each="classs,rowStat : ${classsss}">
+					<td class="text-center" th:text="${rowStat.index + 1}"></td>
+
+					<td class="text-center" th:text="${classs.student.name}"></td>
+					<td class="text-center"
+						th:text="${classs.ClassforSubject.Subject.name}"></td>
+					<td class="text-center"
+						th:text="${classs.ClassforSubject.Subject.credit}"></td>
+					<td class="text-center"
+						th:text="${classs.ClassforSubject.Subject.credit}*3000000+ vnd"></td>
+					<td class="text-center"> 
+					
+						 <div class="form-check">
+							<input class="form-check-input" type="checkbox"
+								th:id="'flexCheckChecked_' + ${rowStat.index}"
+								th:value="${classs.ClassforSubject.id}"
+								data-credit="${classs.ClassforSubject.Subject.credit}">
+
+							<label class="form-check-label"
+								th:for="'flexCheckChecked_' + ${rowStat.index}"></label>
+						</div> 
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+
+		<form id="orderForm" th:action="/admin/paymentoff"  method="post" >
+			<div class="form-group">
+				<label for="amount" class="total">Total</label> 
+				<input type="number" 
+					readonly class="form-control" name="amount" required
+					style="width: 10% ; text-align: center" >
+					<span > vnd</span>
+			</div>
+			
+			<!-- Hidden input fields for selected item IDs -->
+			<input type="hidden" id="selectedItems" name="selectedItems">
+			<button type="submit" id="paymentButton" class="btn btn-primary">Payment</button>
+		</form>
+
+
+
+		<script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script th:inline="javascript">
+document.addEventListener("DOMContentLoaded", function() {
+    var checkboxes = document.querySelectorAll('.form-check-input');
+    var totalInput = document.querySelector('input[name="amount"]');
+    var totalCredits = 0;
+    var creditStates = {}; // Object to store the state of each credit
+
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var row = this.closest('tr');
+            var creditText = row.querySelector('td:nth-child(4)').textContent.trim();
+            var credit = parseInt(creditText);
+
+            if (!isNaN(credit)) {
+                // Update the state of the credit
+                creditStates[credit] = this.checked;
+
+                // Update the total based on credit state
+                if (this.checked) {
+                    totalCredits += credit;
+                } else {
+                    totalCredits -= credit;
+                }
+                totalInput.value = totalCredits * 3000000;
+            } else {
+                console.error("Invalid credit value:", creditText);
+            }
+        });
+    });
+
+    // Restore credit states from sessionStorage if available
+    var storedStates = sessionStorage.getItem('creditStates');
+    if (storedStates) {
+        creditStates = JSON.parse(storedStates);
+        // Update total based on stored credit states
+        checkboxes.forEach(function(checkbox) {
+            var row = checkbox.closest('tr');
+            var creditText = row.querySelector('td:nth-child(4)').textContent.trim();
+            var credit = parseInt(creditText);
+            if (creditStates[credit]) {
+                checkbox.checked = true;
+                totalCredits += credit;
+            }
+        });
+        totalInput.value = totalCredits * 3000000;
+    }
+
+    // Save credit states to sessionStorage when leaving the page
+    window.addEventListener('beforeunload', function() {
+        sessionStorage.setItem('creditStates', JSON.stringify(creditStates));
+    });
+});
+
+// Handle form submission with confirmation dialog
+document.addEventListener("DOMContentLoaded", function() {
+    $('#orderForm').submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Show confirmation dialog
+        if (confirm("Bạn có muốn thanh toán không?")) {
+            // Proceed with the form submission and update the status
+            var selectedItems = [];
+            $('.form-check-input:checked').each(function() {
+                selectedItems.push($(this).val());
+            });
+            $('#selectedItems').val(selectedItems.join(','));
+
+            // AJAX request to update the status
+            $.ajax({
+                url: '/admin/payment/updateStatus', // Adjust this URL to your backend endpoint
+                type: 'POST',
+                data: JSON.stringify(selectedItems),
+                contentType: 'application/json',
+                success: function(response) {
+                    // On success, submit the form to proceed with payment
+                    $('#orderForm').off('submit').submit();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error("Error updating status:", error);
+                }
+            });
+        }
+    });
+});
+</script>
+
+	</article>
+</body>
+</html>

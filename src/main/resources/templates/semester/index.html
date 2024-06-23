@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="~{adminLayout/adminLayout}">
+<head>
+<meta charset="ISO-8859-1">
+<title>List Semester</title>
+<style>
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+th, td {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+th {
+	background-color: #f2f2f2;
+}
+</style>
+</head>
+<body>
+<div layout:fragment="content" class="card text-center ml-3">
+<input th:if="${error=='CREATED'}" class="show_success_toast" readonly type="hidden"  th:value="#{toast.success.create}">
+		<input th:if="${error=='UPDATED'}" class="show_success_toast" readonly type="hidden"  th:value="#{toast.success.update}">
+
+		<table th:action="@{Semeter}" method="get" 
+			class="display">
+			<thead>
+				<tr>
+
+					<th>Semester</th>
+
+					<!-- <th>Year</th> -->
+					<th>Date Start</th>
+					<th>Date End</th>
+					<th>StartRegisDate</th>
+					<th>CloseRegisDate</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="semester : ${sem}">
+
+					<td class="text-center" th:text="${semester.name}"></td>
+
+					<!-- <td class="text-center" th:text="${semester.year}"></td> -->
+					<!-- <td th:text="${semester.day_start}"></td> -->
+					<td class="text-center" th:text="${#dates.format(semester.day_start, 'dd/MM/yyyy')}"></td>
+					<td class="text-center" th:text="${#dates.format(semester.day_end, 'dd/MM/yyyy')}"></td>
+					<td class="text-center" th:text="${#dates.format(semester.startRegisDate, 'dd/MM/yyyy')}"></td>
+					<td class="text-center" th:text="${#dates.format(semester.closeRegisDate, 'dd/MM/yyyy')}"></td>
+					<td class="text-center"><a
+						th:href="@{'/admin/semester/updatesemester/' +*{id}}"
+						class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+						title="Update"><i class="fas fa-edit"></i></a></td>
+			</tr>
+			</tbody>	
+			</table>
+			</div>
+</body>
+</html>

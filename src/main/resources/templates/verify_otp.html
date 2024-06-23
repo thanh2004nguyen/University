@@ -1,0 +1,27 @@
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+layout:decorate="~{/nonelayout}">
+
+   <div class="main" layout:fragment="content">
+
+			         
+			<form th:action="@{/verify-otp}" method="post" style="width: 500px; margin: 0 auto;">
+				<div class="border border-secondary rounded p-3">
+				    <div>
+				       <h1>Verify  OTP</h1>
+				       <span style="color:green" th:if="${successMessage}" class="success-message" th:text="${successMessage}"></span>
+				       <span style="color:red" th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></span>
+				    </div>
+				   
+				    <div>
+				        <p>
+				            <input type="number" name="otp" class="form-control" placeholder="Enter your OTP" required />
+				        </p>         
+				        <p class="text-center">
+				            <button>Verify</button>
+				        </p>
+				    </div>
+				</div>
+			</form>
+	</div>
+</html>

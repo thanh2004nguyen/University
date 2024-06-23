@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{adminLayout/adminLayout}">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div layout:fragment="content" class="card text-center ml-3">
+       
+       <div style="width:100%" class="card-header">
+        <h3 style="font-weight:bold; font-size:40px" th:text="#{holiday.head.index}">List Class</h3>
+        <div class="d-flex align-items-center justify-content-between" style="padding: 0 10px">
+       <form style="width:100%" class="d-flex align-items-center justify-content-between" method="get" th:action="@{/holiday/index}" id="form_change_semester">
+       <div>
+       <span th:text="#{label.year} +' : '">Year :</span>
+       <select name="semester" id="select_semeser">
+       <option th:each="se :${semesters}" 
+       th:selected="${currentSemester == se.id}"
+       th:value="${se.year}"
+       th:text="${se.year}"></option>
+       </select>
+       </div>
+    
+       
+       <input th:if="${error=='CREATED'}" class="show_success_toast" readonly type="hidden"  th:value="#{toast.success.create}">
+       <input th:if="${error=='UPDATED'}" class="show_success_toast" readonly type="hidden"  th:value="#{toast.success.update}">
+       <input th:if="${error=='DELETED'}" class="show_success_toast" readonly type="hidden"  th:value="#{toast.success.delete}">
+       <input th:if="${error=='ERROR'}" class="show_success_toast" readonly type="hidden"  th:value="#{toast.error.delete.over}">
+       
+      
+   
+      </form>
+      
+      </div>
+      
+       </div>  
+       
+       
+        <table class="table  border card-body" id="class_for_subject_table">
+            <thead class="bg bg-primary">
+                <tr>
+                    <th>#</th>
+                    <th  class="text-center" th:text="#{label.name}">Name</th>
+                    <th class="text-center" th:text="#{holiday.date.start}">Date start</th>
+                    <th class="text-center" th:text="#{holiday.date.end}">Date end</th>
+                    <th class="text-center" th:text="#{label.year}">year</th>
+                    <th class="text-center" th:text="#{label.class}">Class</th>
+                    <th class="text-center" th:text="#{label.action}">Action</th>
+
+                </tr>
+            </thead>
+            <tbody th:each="s, iterStat : ${data.content}" th:object="${s}">
+                <tr th:classappend="${s.id%2==0 ? 'table-active' : ''}">
+                    <td class="text-center" th:text="${iterStat.index + 1}"></td>
+                    <td class="text-center" th:text="*{name}"></td>
+                    <td class="text-center" th:text="*{#dates.format(dateStart, 'dd-MM-yyyy')}"></td>
+                     <td class="text-center" th:text="*{#dates.format(dateEnd, 'dd-MM-yyyy')}"></td>
+                    <td class="text-center" th:text="*{year}"></td>
+                     <td class="text-center" th:text="*{classSubject != null ? classSubject.name : ''}"></td>
+                    <td class="text-center" >
+                    <a class="btn btn-warning" data-toggle="tooltip" data-placement="top" th:title="#{label.update}"
+                    th:href="@{'/admin/holiday/edit/'+*{id}}"
+        > <i class="fas fa-edit"></i></a>
+        
+        <a class="btn btn-danger" data-toggle="tooltip" data-placement="top" th:title="#{label.delete}"
+                    th:href="@{'/admin/holiday/delete/'+*{id}}"
+        > <i class="fas fa-trash-alt"></i></a>
+                    </td>
+                  
+                </tr>
+            </tbody>
+        </table>
+       
+        
+        <div class="card-footer" >
+        <a th:data-s="${data.number+1}" id="back_page_btn"  th:classappend="${data.first} ? 'disabled' : ''"  class="btn " 
+        style="border:solid 1px black; padding: 3px 10px ; margin-right:10px" th:text="#{label.back}"
+        > Previous</a>
+        
+     <a th:each="pageNo : ${#numbers.sequence(0, data.totalPages-1)}"
+   th:classappend="${pageNo == data.number ? 'text-primary' : ''}"
+   class="btn change_page_href"  style="border:solid 1px black; padding: 3px 10px ; margin:0px 5px"
+   th:text="${pageNo + 1}"
+>
+</a>
+        
+        <a th:data-s="${data.number+1}" id="next_page_btn"  th:classappend="${data.last} ? 'disabled' : ''"  class="btn "  
+        style="border:solid 1px black; padding: 3px 10px ;margin-left:10px"  th:text="#{label.next}" > Next</a>
+        </div>
+        
+        
+    </div>
+</body>
+</html>
